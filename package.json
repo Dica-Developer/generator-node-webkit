@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A generator for node-webkit",
   "keywords": [
-    "yeoman-generator"
+    "yeoman-generator",
+    "node-webkit"
   ],
   "homepage": "https://github.com/Dica-Developer/generator-node-webkit",
   "bugs": "https://github.com/Dica-Developer/generator-node-webkit/issues",
