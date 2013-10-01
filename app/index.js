@@ -7,6 +7,7 @@ var https = require('https');
 var fs = require('fs-extra');
 var AdmZip = require('adm-zip');
 var url = require('url');
+var GitHubApi = require('github');
 
 var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
 var githubOptions = {
@@ -19,7 +20,6 @@ if (proxy) {
   githubOptions.proxy.port = url.parse(proxy).port;
 }
 
-var GitHubApi = require('github');
 var github = new GitHubApi(githubOptions);
 
 var suggestAppNameFromPath = function (_) {
@@ -128,37 +128,37 @@ NodeWebkitGenerator.prototype.userInfo = function userInfo() {
 NodeWebkitGenerator.prototype.app = function app() {
   this.mkdir('app');
   this.mkdir('app/img');
-  this.mkdir('resources');
+  this.mkdir('resources/node-webkit');
   if(this.MacOS){
-    this.mkdir('resources/mac');
+    this.mkdir('resources/node-webkit/mac');
   }
   if(this.Linux32){
-    this.mkdir('resources/linux32');
+    this.mkdir('resources/node-webkit/linux32');
   }
   if(this.Linux64){
-    this.mkdir('resources/linux64');
+    this.mkdir('resources/node-webkit/linux64');
   }
   if(this.Windows){
-    this.mkdir('resources/win');
+    this.mkdir('resources/node-webkit/win');
   }
   this.mkdir('tmp');
 
   this.copy('_bower.json', 'bower.json');
-  this.copy('_main.css', 'app/css/main.css');
-  this.copy('_index.js', 'app/js/index.js');
+  this.copy('app/_main.css', 'app/css/main.css');
+  this.copy('app/_index.js', 'app/js/index.js');
   this.template('_package.json', 'package.json');
-  this.template('_app-package.json', 'app/package.json');
-  this.template('_index.html', 'app/views/index.html');
+  this.template('app/_package.json', 'app/package.json');
+  this.template('app/_index.html', 'app/views/index.html');
   this.template('_Gruntfile.js', 'Gruntfile.js');
 };
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
-  var cb = this.async();
+  var done = this.async();
   when.all(this._getNodeWebkit(),
     function(){
-      cb();
+      done();
     }, function(error){
-      cb(error);
+      done(error);
     });
 };
 
@@ -215,18 +215,18 @@ NodeWebkitGenerator.prototype.unzipNodeWebkit = function unzipNodeWebkit(){
   }
   if(this.Windows){
     var zipWin = new AdmZip('tmp/node-webkit-v0.7.5-win-ia32.zip');
-    zipWin.extractAllTo('resources/win', true);
+    zipWin.extractAllTo('resources/node-webkit/win', true);
   }
 };
 
 NodeWebkitGenerator.prototype.copyNodeWebkit = function unzipNodeWebkit(){
-  var cb = this.async();
+  var done = this.async();
   if(this.MacOS){
-    fs.copy('tmp/mac/node-webkit.app', 'resources/mac/node-webkit.app', function(error){
+    fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function(error){
       if(error){
-        cb(error);
+        done(error);
       }else{
-        cb();
+        done();
       }
     });
   }
