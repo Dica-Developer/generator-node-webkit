@@ -77,8 +77,7 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
       type: 'checkbox',
       name: 'platforms',
       message: 'Which platform do you wanna support?',
-      choices: ['MacOS','Linux 32','Linux 64','Windows'],
-      default: 'MacOS'
+      choices: ['MacOS','Linux 32','Linux 64','Windows']
     }
   ];
 
@@ -92,6 +91,7 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
     this.Linux32 = false;
     this.Linux64 = false;
     this.Windows = false;
+    this.github = false;
 
     props.platforms.forEach(function(platform){
       switch(platform){
@@ -117,12 +117,17 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
 NodeWebkitGenerator.prototype.userInfo = function userInfo() {
   var done = this.async();
 
-  githubUserInfo(this.githubUser, function (res) {
-    this.realname = res.name;
-    this.email = res.email;
-    this.githubUrl = res.html_url;
+  if(this.githubUser !== 'someUser'){
+    this.github = true;
+    githubUserInfo(this.githubUser, function (res) {
+      this.realname = res.name;
+      this.email = res.email;
+      this.githubUrl = res.html_url;
+      done();
+    }.bind(this));
+  } else {
     done();
-  }.bind(this));
+  }
 };
 
 NodeWebkitGenerator.prototype.app = function app() {
@@ -154,12 +159,16 @@ NodeWebkitGenerator.prototype.app = function app() {
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
   var done = this.async();
-  when.all(this._getNodeWebkit(),
-    function(){
-      done();
-    }, function(error){
-      done(error);
-    });
+  if(this.platforms.length > 0){
+    when.all(this._getNodeWebkit(),
+      function(){
+        done();
+      }, function(error){
+        done(error);
+      });
+  } else {
+    done();
+  }
 };
 
 
@@ -203,32 +212,38 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
 };
 
 NodeWebkitGenerator.prototype.unzipNodeWebkit = function unzipNodeWebkit(){
-  if(this.MacOS){
-    var zipMac = new AdmZip('tmp/node-webkit-v0.7.5-osx-ia32.zip');
-    zipMac.extractAllTo('tmp/mac', true);
-  }
-  if(this.Linux32){
-    //TODO tar.gz
-  }
-  if(this.Linux64){
-    //TODO tar.gz
-  }
-  if(this.Windows){
-    var zipWin = new AdmZip('tmp/node-webkit-v0.7.5-win-ia32.zip');
-    zipWin.extractAllTo('resources/node-webkit/win', true);
+  if(this.platforms.length > 0){
+    if(this.MacOS){
+      var zipMac = new AdmZip('tmp/node-webkit-v0.7.5-osx-ia32.zip');
+      zipMac.extractAllTo('tmp/mac', true);
+    }
+    if(this.Linux32){
+      //TODO tar.gz
+    }
+    if(this.Linux64){
+      //TODO tar.gz
+    }
+    if(this.Windows){
+      var zipWin = new AdmZip('tmp/node-webkit-v0.7.5-win-ia32.zip');
+      zipWin.extractAllTo('resources/node-webkit/win', true);
+    }
   }
 };
 
 NodeWebkitGenerator.prototype.copyNodeWebkit = function unzipNodeWebkit(){
   var done = this.async();
-  if(this.MacOS){
-    fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function(error){
-      if(error){
-        done(error);
-      }else{
-        done();
-      }
-    });
+  if(this.platforms.length > 0){
+    if(this.MacOS){
+      fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function(error){
+        if(error){
+          done(error);
+        }else{
+          done();
+        }
+      });
+    }
+  } else{
+    done();
   }
 };
 
