@@ -34,62 +34,6 @@ module.exports = function (grunt) {
       },
       files: '<%%= config.app %>/js/*.js'
     },
-    useminPrepare: {
-      options: {
-        dest: '<%%= config.dist %>'
-      },
-      html: [
-        '<%%= config.app %>/{,*/}*.html'
-      ]
-    },
-    usemin: {
-      options: {
-        dirs: ['<%%= config.dist %>']
-      },
-      html: ['<%%= config.dist %>/{,*/}*.html'],
-      css: ['<%%= config.dist %>/styles/{,*/}*.css']
-    },
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%%= config.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg}',
-          dest: '<%%= config.dist %>/images'
-        }]
-      }
-    },
-    cssmin: {
-      dist: {
-        files: {
-          '<%%= datameerTools.dist %>/styles/main.css': [
-            '.tmp/styles/{,*/}*.css',
-            '<%%= config.app %>/styles/{,*/}*.css'
-          ]
-        }
-      }
-    },
-    htmlmin: {
-      dist: {
-        options: {
-          /*removeCommentsFromCDATA: true,
-           // https://github.com/yeoman/grunt-usemin/issues/44
-           //collapseWhitespace: true,
-           collapseBooleanAttributes: true,
-           removeAttributeQuotes: true,
-           removeRedundantAttributes: true,
-           useShortDoctype: true,
-           removeEmptyAttributes: true,
-           removeOptionalTags: true*/
-        },
-        files: [{
-          expand: true,
-          cwd: '<%%= config.app %>',
-          src: '*.html',
-          dest: '<%%= config.dist %>'
-        }]
-      }
-    },
     copy: {
       appLinux: {
         files: [{
