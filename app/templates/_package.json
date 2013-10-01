@@ -3,17 +3,19 @@
   "version": "0.0.0",
   "description": "<%= description %>",
   "keywords": [],
-  "homepage": "<%= githubUrl %>/<%= _.slugify(appName) %>",
-  "bugs": "<%= githubUrl %>/<%= _.slugify(appName) %>/issues",
-  "author": {
-    "name": "<%= realname %>",
-    "email": "<%= email %>",
-    "url": "<%= githubUrl %>"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/<%= githubUser %>/<%= _.slugify(appName) %>.git"
-  },
+  <% if(github) {%>
+    "homepage": "<%= githubUrl %>/<%= _.slugify(appName) %>",
+    "bugs": "<%= githubUrl %>/<%= _.slugify(appName) %>/issues",
+    "author": {
+      "name": "<%= realname %>",
+      "email": "<%= email %>",
+      "url": "<%= githubUrl %>"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/<%= githubUser %>/<%= _.slugify(appName) %>.git"
+    },
+  <% } %>
   "dependencies": {},
   "devDependencies": {
     "matchdep": "~0.1.1",

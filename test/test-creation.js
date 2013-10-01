@@ -27,11 +27,15 @@ describe('node-webkit generator', function () {
     ];
 
     helpers.mockPrompt(this.app, {
-      'someOption': true
+      'appName': 'Test App',
+      'appDescription': 'Test App Description',
+      'githubUser': 'someUser',
+      'platforms': []
     });
     this.app.options['skip-install'] = true;
     this.app.run({}, function () {
       helpers.assertFiles(expected);
+      console.log(1);
       done();
     });
   });
