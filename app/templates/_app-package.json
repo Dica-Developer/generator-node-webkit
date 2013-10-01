@@ -1,0 +1,14 @@
+{
+  "name": "<%= _.slugify(appName) %>",
+  "main": "views/index.html",
+  "version": "0.0.1",
+  "single-instance": true,
+  "window": {
+    "title": "<%= appName %>",
+    "width": 650,
+    "height": 650,
+    "min_width": 650,
+    "min_height": 650
+  },
+  "chromium-args": "--child-clean-exit"
+}
