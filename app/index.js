@@ -169,16 +169,6 @@ NodeWebkitGenerator.prototype.app = function app() {
     this.mkdir('resources/node-webkit/win');
   }
   this.mkdir('tmp');
-
-  this.copy('_bower.json', 'bower.json');
-  this.copy('app/_main.css', 'app/css/main.css');
-  this.copy('app/_index.js', 'app/js/index.js');
-  this.template('_package.json', 'package.json');
-  this.template('app/_package.json', 'app/package.json');
-  this.template('app/_index.html', 'app/views/index.html');
-  this.template('_Gruntfile.js', 'Gruntfile.js');
-  this.template('mac-files/_Info.plist.tmp', 'resources/mac-files/Info.plist.tmp');
-  this.template('mac-files/_Info.plist', 'resources/mac-files/Info.plist');
 };
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
@@ -212,56 +202,99 @@ NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit(){
 };
 
 NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(versionString, platform){
-  var defer = when.defer();
-  if (!fs.existsSync('tmp/node-webkit-v0.7.5-'+ versionString)) {
-    console.log('Downloading node-webkit for ' + platform);
+  var defer = when.defer(),
+    _this = this;
+  if (!fs.existsSync('tmp/node-webkit-'+ versionString)) {
+    this.log.info('Downloading node-webkit for ' + platform);
     https.get(this.nodeWebkitBaseUrl + versionString, function (res) {
-      res.on('data', function (chunk) {
-        fs.appendFileSync('tmp/node-webkit-v0.7.5-'+ versionString, chunk);
-      }).on('end', function () {
-          defer.resolve();
-      }).on('error', function(error){
-          defer.reject(error);
-      });
+      if(res.headers['content-type'] === 'application/zip'){
+        res.on('data', function (chunk) {
+          fs.appendFileSync('tmp/node-webkit-'+ versionString, chunk);
+        }).on('end', function () {
+            _this.log.ok('Node-webkit for ' + platform + ' downloaded');
+            _this._unzipNodeWebkit(platform);
+            defer.resolve();
+        }).on('error', function(error){
+            _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+            defer.reject(error);
+        });
+      } else {
+        _this.log.conflict('Wrong content type for %s', platform);
+        defer.reject();
+      }
     }).on('error', function(error){
-        defer.reject(error);
+        _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+        defer.reject();
     });
   } else{
-    console.log('Already downloaded');
+    this.log.ok('Node-webkit for ' + platform + ' already downloaded');
     defer.resolve();
   }
   return defer.promise;
 };
 
-NodeWebkitGenerator.prototype.unzipNodeWebkit = function unzipNodeWebkit(){
-  if(this.platforms.length > 0){
-    if(this.MacOS){
-      var zipMac = new AdmZip('tmp/node-webkit-v0.7.5-osx-ia32.zip');
+NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit(platform){
+  this.log.info('Unzip %s files.', platform);
+  switch (platform) {
+    case 'MacOS':
+      var zipMac = new AdmZip('tmp/node-webkit-osx-ia32.zip');
       zipMac.extractAllTo('tmp/mac', true);
-    }
-    if(this.Linux32){
+      this._copyNodeWebkit(platform);
+      break;
+    case 'Linux32':
       //TODO tar.gz
-    }
-    if(this.Linux64){
+      break;
+    case 'Linux64':
       //TODO tar.gz
-    }
-    if(this.Windows){
-      var zipWin = new AdmZip('tmp/node-webkit-v0.7.5-win-ia32.zip');
+      break;
+    case 'Windows':
+      var zipWin = new AdmZip('tmp/node-webkit-win-ia32.zip');
       zipWin.extractAllTo('resources/node-webkit/win', true);
-    }
+      break;
   }
 };
 
-NodeWebkitGenerator.prototype.copyNodeWebkit = function unzipNodeWebkit(){
-  var done = this.async();
-  if(this.platforms.length > 0){
-    if(this.MacOS){
-      fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function(error){
-        error ? done(error) : done();
+NodeWebkitGenerator.prototype._copyNodeWebkit = function _copyNodeWebkit(platform) {
+  var _this = this;
+  this.log.info('Copy %s files.', platform);
+  switch(platform){
+    case 'MacOS':
+      fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function (error) {
+        if (error) {
+          _this.log.conflict('Error while copying files for '+ platform +'!', error);
+        } else {
+          _this.log.ok('%s files successfully copied.', platform);
+//          _this._cleanUp(platform);
+        }
       });
-    }
-  } else{
-    done();
+      break;
+    default:
+      this.log.ok('No files to copy');
+  }
+};
+
+NodeWebkitGenerator.prototype._cleanUp = function _cleanUp(platform) {
+  var _this = this;
+  this.log.info('Cleaning up tmp directories for %s.', platform);
+  switch(platform){
+    case 'MacOS':
+      fs.remove('tmp/mac', function(error){
+        if(error){
+          _this.log.conflict('Error while deleting tmp directory for '+ platform +'!', error);
+        } else {
+          _this.log.ok('Tmp directory for %s successfully removed.', platform);
+        }
+      });
+      fs.remove('tmp/node-webkit-osx-ia32.zip', function(error){
+        if(error){
+          _this.log.conflict('Error while deleting zip file for '+ platform +'!', error);
+        } else {
+          _this.log.ok('Zip file for %s successfully removed.', platform);
+        }
+      });
+      break;
+    default:
+      this.log.ok('No files to copy');
   }
 };
 
@@ -269,3 +302,16 @@ NodeWebkitGenerator.prototype.projectfiles = function projectfiles() {
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
 };
+
+NodeWebkitGenerator.prototype.copyFiles = function copyFiles() {
+  this.copy('_bower.json', 'bower.json');
+  this.copy('app/_main.css', 'app/css/main.css');
+  this.copy('app/_index.js', 'app/js/index.js');
+  this.template('_package.json', 'package.json');
+  this.template('app/_package.json', 'app/package.json');
+  this.template('app/_index.html', 'app/views/index.html');
+  this.template('_Gruntfile.js', 'Gruntfile.js');
+  this.template('mac-files/_Info.plist.tmp', 'resources/mac-files/Info.plist.tmp');
+  this.template('mac-files/_Info.plist', 'resources/mac-files/Info.plist');
+};
+
