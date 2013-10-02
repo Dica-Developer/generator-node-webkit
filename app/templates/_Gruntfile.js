@@ -52,14 +52,14 @@ module.exports = function (grunt) {
         },
           {
             expand: true,
-            cwd: '<%%= config.resources %>/macFiles/',
+            cwd: '<%%= config.resources %>/mac-files/',
             dest: '<%%= config.dist %>/node-webkit.app/Contents/',
             filter: 'isFile',
             src: '*.plist'
           },
           {
             expand: true,
-            cwd: '<%%= config.resources %>/macFiles/',
+            cwd: '<%%= config.resources %>/mac-files/',
             dest: '<%%= config.dist %>/node-webkit.app/Contents/Resources/',
             filter: 'isFile',
             src: '*.icns'
@@ -68,7 +68,7 @@ module.exports = function (grunt) {
       webkit: {
         files: [{
           expand: true,
-          cwd: '<%%=config.resources %>/node-webkit/mac-os',
+          cwd: '<%%=config.resources %>/node-webkit/mac',
           dest: '<%%= config.dist %>/',
           src: '**'
         }]
@@ -162,13 +162,13 @@ module.exports = function (grunt) {
     var resourcesPath = config.resources;
     var mainPackageJSON = grunt.file.readJSON('package.json');
     var appPackageJSON = grunt.file.readJSON(appPath + '/package.json');
-    var infoPlistTmp = grunt.file.read(resourcesPath + '/macFiles/Info.plist.tmp', {encoding: 'UTF8'});
+    var infoPlistTmp = grunt.file.read(resourcesPath + '/mac-files/Info.plist.tmp', {encoding: 'UTF8'});
     var infoPlist = grunt.template.process(infoPlistTmp, {data: {version: version}});
     mainPackageJSON.version = version;
     appPackageJSON.version = version;
     grunt.file.write('package.json', JSON.stringify(mainPackageJSON, null, 2), {encoding: 'UTF8'});
     grunt.file.write(appPath + '/package.json', JSON.stringify(appPackageJSON, null, 2), {encoding: 'UTF8'});
-    grunt.file.write(resourcesPath + '/macFiles/Info.plist', infoPlist, {encoding: 'UTF8'});
+    grunt.file.write(resourcesPath + '/mac-files/Info.plist', infoPlist, {encoding: 'UTF8'});
   });
 
   grunt.registerTask('dist-linux', [
@@ -188,7 +188,7 @@ module.exports = function (grunt) {
     'compress:finalWindowsApp'
   ]);
 
-  grunt.registerTask('dist', [
+  grunt.registerTask('dist-mac', [
     'jshint',
     'clean:dist',
     'copy:webkit',
