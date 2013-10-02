@@ -178,6 +178,8 @@ NodeWebkitGenerator.prototype.app = function app() {
   this.template('app/_package.json', 'app/package.json');
   this.template('app/_index.html', 'app/views/index.html');
   this.template('_Gruntfile.js', 'Gruntfile.js');
+  this.template('mac-files/_Info.plist.tmp', 'resources/mac-files/Info.plist.tmp');
+  this.template('mac-files/_Info.plist', 'resources/mac-files/Info.plist');
 };
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
