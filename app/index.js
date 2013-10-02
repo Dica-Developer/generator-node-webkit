@@ -77,7 +77,30 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
       type: 'checkbox',
       name: 'platforms',
       message: 'Which platform do you wanna support?',
-      choices: ['MacOS','Linux 32','Linux 64','Windows']
+      choices: [
+        {
+          name: 'MacOS',
+          checked: true
+        },
+        {
+          name: 'Linux 32',
+          checked: true
+        },
+        {
+          name: 'Linux 64',
+          checked: true
+        },
+        {
+          name: 'Windows',
+          checked: true
+        }
+      ],
+      validate: function( answer ) {
+        if ( answer.length < 1 ) {
+          return "You must choose at least one platform.";
+        }
+        return true;
+      }
     }
   ];
 
