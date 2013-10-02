@@ -117,7 +117,7 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
 NodeWebkitGenerator.prototype.userInfo = function userInfo() {
   var done = this.async();
 
-  if(this.githubUser !== 'someUser'){
+  if(this.githubUser !== 'someuser'){
     this.github = true;
     githubUserInfo(this.githubUser, function (res) {
       this.realname = res.name;
@@ -159,13 +159,11 @@ NodeWebkitGenerator.prototype.app = function app() {
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
   var done = this.async();
+  var whenClbk = function(){
+    done();
+  };
   if(this.platforms.length > 0){
-    when.all(this._getNodeWebkit(),
-      function(){
-        done();
-      }, function(error){
-        done(error);
-      });
+    when.all(this._getNodeWebkit(), whenClbk, whenClbk);
   } else {
     done();
   }
@@ -235,11 +233,7 @@ NodeWebkitGenerator.prototype.copyNodeWebkit = function unzipNodeWebkit(){
   if(this.platforms.length > 0){
     if(this.MacOS){
       fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function(error){
-        if(error){
-          done(error);
-        }else{
-          done();
-        }
+        error ? done(error) : done();
       });
     }
   } else{
