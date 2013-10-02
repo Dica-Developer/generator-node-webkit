@@ -27,17 +27,6 @@ var suggestAppNameFromPath = function (_) {
   return _.slugify(basePath);
 };
 
-var githubUserInfo = function (name, cb) {
-  github.user.getFrom({
-    user: name
-  }, function (err, res) {
-    if (err) {
-      throw err;
-    }
-    cb(JSON.parse(JSON.stringify(res)));
-  });
-};
-
 var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, options, config) {
   yeoman.generators.Base.apply(this, arguments);
 
@@ -139,15 +128,25 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
 
 NodeWebkitGenerator.prototype.userInfo = function userInfo() {
   var done = this.async();
+  var _this = this;
+  var responseClbk = function (err, responseText) {
+    if (err) {
+      _this.log.conflict(err);
+      throw err;
+    } else {
+      var responseObject = JSON.parse(JSON.stringify(responseText));
+      _this.log.ok('Github informations successfully retrieved.');
+      _this.realname = responseObject.name;
+      _this.email = responseObject.email;
+      _this.githubUrl = responseObject.html_url;
+      done();
+    }
+  };
 
   if(this.githubUser !== 'someuser'){
+    this.log.info('Get GitHub informations');
     this.github = true;
-    githubUserInfo(this.githubUser, function (res) {
-      this.realname = res.name;
-      this.email = res.email;
-      this.githubUrl = res.html_url;
-      done();
-    }.bind(this));
+    github.user.getFrom({ user: this.githubUser }, responseClbk);
   } else {
     done();
   }
