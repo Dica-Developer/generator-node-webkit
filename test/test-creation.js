@@ -15,27 +15,41 @@ describe('node-webkit generator', function () {
       this.app = helpers.createGenerator('node-webkit:app', [
         '../../app'
       ]);
+
+      helpers.mockPrompt(this.app, {
+        'appName': 'Test App',
+        'appDescription': 'Test App Description',
+        'githubUser': 'someUser',
+        'platforms': []
+      });
+      this.app.options['skip-install'] = true;
+
       done();
     }.bind(this));
   });
 
-  it('creates expected files', function (done) {
+  it('Creates dot files', function (done) {
     var expected = [
-      // add files you expect to exist here.
       '.jshintrc',
       '.editorconfig'
     ];
 
-    helpers.mockPrompt(this.app, {
-      'appName': 'Test App',
-      'appDescription': 'Test App Description',
-      'githubUser': 'someUser',
-      'platforms': []
-    });
-    this.app.options['skip-install'] = true;
     this.app.run({}, function () {
       helpers.assertFiles(expected);
-      console.log(1);
+      done();
+    });
+  });
+
+  it('Creates main package files', function (done) {
+    var expected = [
+      // add files you expect to exist here.
+      'Gruntfile.js',
+      'package.json',
+      'bower.json'
+    ];
+
+    this.app.run({}, function () {
+      helpers.assertFiles(expected);
       done();
     });
   });
