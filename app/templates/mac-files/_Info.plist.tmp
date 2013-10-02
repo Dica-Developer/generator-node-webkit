@@ -8,8 +8,8 @@
 	<string><%= appName %></string>
 	<key>CFBundleExecutable</key>
 	<string>node-webkit</string>
-	<key>CFBundleGetInfoString</key>
 	<% if(github) {%>
+	<key>CFBundleGetInfoString</key>
 	<string>© <%= realname %>, 2013</string>
 	<% } %>
 	<key>CFBundleIconFile</key>
