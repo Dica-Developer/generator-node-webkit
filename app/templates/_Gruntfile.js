@@ -68,7 +68,7 @@ module.exports = function (grunt) {
       webkit: {
         files: [{
           expand: true,
-          cwd: '<%%=config.resources %>/node-webkit/mac',
+          cwd: '<%%=config.resources %>/node-webkit/MacOS',
           dest: '<%%= config.dist %>/',
           src: '**'
         }]
@@ -76,7 +76,7 @@ module.exports = function (grunt) {
       copyWinToTmp: {
         files: [{
           expand: true,
-          cwd: '<%%= config.resources %>/node-webkit/windows/',
+          cwd: '<%%= config.resources %>/node-webkit/Windows/',
           dest: '<%%= config.tmp %>/',
           src: '**'
         }]
