@@ -8,6 +8,7 @@ var fs = require('fs-extra');
 var AdmZip = require('adm-zip');
 var url = require('url');
 var GitHubApi = require('github');
+var DecompressZip = require('decompress-zip');
 
 var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
 var githubOptions = {
@@ -120,7 +121,6 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
           break;
       }
     });
-
     done();
   }.bind(this));
 };
@@ -156,62 +156,62 @@ NodeWebkitGenerator.prototype.app = function app() {
   this.mkdir('app/img');
   this.mkdir('resources/node-webkit');
   if(this.MacOS){
-    this.mkdir('resources/node-webkit/mac');
+    this.mkdir('resources/node-webkit/MacOS');
   }
   if(this.Linux32){
-    this.mkdir('resources/node-webkit/linux32');
+    this.mkdir('resources/node-webkit/Linux32');
   }
   if(this.Linux64){
-    this.mkdir('resources/node-webkit/linux64');
+    this.mkdir('resources/node-webkit/Linux64');
   }
   if(this.Windows){
-    this.mkdir('resources/node-webkit/win');
+    this.mkdir('resources/node-webkit/Windows');
   }
   this.mkdir('tmp');
 };
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit(){
   var done = this.async();
-  var whenClbk = function(){
+  var successClbk = function(){
     done();
   };
-  if(this.platforms.length > 0){
-    when.all(this._getNodeWebkit(), whenClbk, whenClbk);
-  } else {
-    done();
-  }
+  var failureClbk = function(error){
+    throw error;
+  };
+  when.all(this._getNodeWebkit(), successClbk, failureClbk);
 };
 
 
 NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit(){
   var promises = [];
   if(this.MacOS){
-    promises.push(this._requestNodeWebkit('osx-ia32.zip', 'MacOS'));
+    promises.push(this._requestNodeWebkit('osx-ia32', '.zip', 'MacOS'));
   }
   if(this.Linux32){
-    promises.push(this._requestNodeWebkit('linux-ia32.tar.gz', 'Linux32'));
+    promises.push(this._requestNodeWebkit('linux-ia32', '.tar.gz', 'Linux32'));
   }
   if(this.Linux64){
-    promises.push(this._requestNodeWebkit('linux-x64.tar.gz', 'Linux64'));
+    promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz', 'Linux64'));
   }
   if(this.Windows){
-    promises.push(this._requestNodeWebkit('win-ia32.zip', 'Windows'));
+    promises.push(this._requestNodeWebkit('win-ia32', '.zip', 'Windows'));
   }
   return promises;
 };
 
-NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(versionString, platform){
+NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(versionString, extension, platform){
   var defer = when.defer(),
-    _this = this;
-  if (!fs.existsSync('tmp/node-webkit-'+ versionString)) {
+    _this = this,
+    contentType = extension === '.zip' ? 'application/zip' : 'application/x-tar';
+  if (!fs.existsSync('tmp/'+ platform + extension)) {
     this.log.info('Downloading node-webkit for ' + platform);
-    https.get(this.nodeWebkitBaseUrl + versionString, function (res) {
-      if(res.headers['content-type'] === 'application/zip'){
+    https.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
+      console.log(res.headers['content-type']);
+      if(res.headers['content-type'] === contentType){
         res.on('data', function (chunk) {
-          fs.appendFileSync('tmp/node-webkit-'+ versionString, chunk);
+          fs.appendFileSync('tmp/'+ platform + extension, chunk);
         }).on('end', function () {
             _this.log.ok('Node-webkit for ' + platform + ' downloaded');
-            _this._unzipNodeWebkit(platform);
             defer.resolve();
         }).on('error', function(error){
             _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
@@ -219,11 +219,11 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
         });
       } else {
         _this.log.conflict('Wrong content type for %s', platform);
-        defer.reject();
+        defer.reject('Wrong content type for ' + platform);
       }
     }).on('error', function(error){
         _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-        defer.reject();
+        defer.reject(error);
     });
   } else{
     this.log.ok('Node-webkit for ' + platform + ' already downloaded');
@@ -232,26 +232,61 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
   return defer.promise;
 };
 
-NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit(platform){
-  this.log.info('Unzip %s files.', platform);
-  switch (platform) {
-    case 'MacOS':
-      var zipMac = new AdmZip('tmp/node-webkit-osx-ia32.zip');
-      zipMac.extractAllTo('tmp/mac', true);
-      this._copyNodeWebkit(platform);
-      break;
-    case 'Linux32':
-      //TODO tar.gz
-      break;
-    case 'Linux64':
-      //TODO tar.gz
-      break;
-    case 'Windows':
-      var zipWin = new AdmZip('tmp/node-webkit-win-ia32.zip');
-      zipWin.extractAllTo('resources/node-webkit/win', true);
-      break;
-  }
+NodeWebkitGenerator.prototype.unzipNodeWebkit = function unzipNodeWebkit(){
+  var done = this.async();
+  var successClbk = function(){
+    done();
+  };
+  var failureClbk = function(error){
+    throw error;
+  };
+  when.all(this._unzipNodeWebkit(), successClbk, failureClbk);
 };
+
+NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit(){
+  var promises = [];
+
+  if(this.MacOS){
+    promises.push(this._extract('MacOS'));
+  }
+  if(this.Linux32){
+//    promises.push(this._extract('Linux32'));
+  }
+  if(this.Linux64){
+//    promises.push(this._extract('Linux64'));
+  }
+  if(this.Windows){
+    promises.push(this._extract('Windows'));
+  }
+  return promises;
+};
+
+NodeWebkitGenerator.prototype._extract = function _extract(platform) {
+  var _this = this,
+    defer = when.defer();
+  if(fs.existsSync('tmp/'+ platform +'.zip')){
+    this.log.info('Unzip %s files.', platform);
+    var unzipper = new DecompressZip('tmp/'+ platform +'.zip');
+
+    unzipper.on('error', function (error) {
+      _this.log.conflict('Error while unzipping "tmp/'+ platform +'.zip"', error);
+      defer.reject(error);
+    });
+
+    unzipper.on('extract', function () {
+      _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
+      defer.resolve();
+    });
+
+    unzipper.extract({
+      path: 'resources/node-webkit/' + platform
+    });
+  }else{
+    defer.resolve();
+  }
+  return defer.promise;
+};
+
 
 NodeWebkitGenerator.prototype._copyNodeWebkit = function _copyNodeWebkit(platform) {
   var _this = this;
