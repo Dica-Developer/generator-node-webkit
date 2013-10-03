@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "yeoman-generator": "~0.13.0",
-    "adm-zip": "~0.4.3",
     "fs-extra": "~0.6.4",
     "when": "~2.4.0",
-    "github": "~0.1.12"
+    "github": "~0.1.12",
+    "decompress-zip": "0.0.2"
   },
   "devDependencies": {
     "mocha": "~1.12.0"
