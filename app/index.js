@@ -72,17 +72,16 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
           checked: true
         },
         {
-          name: 'Linux 32',
-          checked: true
-        },
-        {
           name: 'Linux 64',
           checked: true
         },
         {
           name: 'Windows',
           checked: true
-        }
+        },
+        {
+          name: 'Linux 32'
+        },
       ],
       validate: function( answer ) {
         if ( answer.length < 1 ) {
