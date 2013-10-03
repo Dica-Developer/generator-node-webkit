@@ -5,7 +5,6 @@ var yeoman = require('yeoman-generator');
 var when = require('when');
 var https = require('https');
 var fs = require('fs-extra');
-var AdmZip = require('adm-zip');
 var url = require('url');
 var GitHubApi = require('github');
 var DecompressZip = require('decompress-zip');
