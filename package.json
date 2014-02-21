@@ -26,7 +26,8 @@
     "fs-extra": "~0.6.4",
     "when": "~2.4.0",
     "github": "~0.1.12",
-    "decompress-zip": "0.0.2"
+    "decompress-zip": "~0.0.2",
+    "tar-fs": "~0.2.2"
   },
   "devDependencies": {
     "mocha": "~1.12.0"

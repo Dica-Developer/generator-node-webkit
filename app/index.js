@@ -8,6 +8,9 @@ var fs = require('fs-extra');
 var url = require('url');
 var GitHubApi = require('github');
 var DecompressZip = require('decompress-zip');
+var tar = require('tar-fs');
+var fs = require('fs');
+var zlib = require('zlib');
 
 var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
 var githubOptions = {
@@ -246,46 +249,53 @@ NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit(){
   var promises = [];
 
   if(this.MacOS){
-    promises.push(this._extract('MacOS'));
+    promises.push(this._extract('MacOS', '.zip'));
   }
   if(this.Linux32){
-//    promises.push(this._extract('Linux32'));
+    promises.push(this._extract('Linux32', '.tar.gz'));
   }
   if(this.Linux64){
-//    promises.push(this._extract('Linux64'));
+    promises.push(this._extract('Linux64', '.tar.gz'));
   }
   if(this.Windows){
-    promises.push(this._extract('Windows'));
+    promises.push(this._extract('Windows', '.zip'));
   }
   return promises;
 };
 
-NodeWebkitGenerator.prototype._extract = function _extract(platform) {
+NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) {
   var _this = this,
     defer = when.defer();
-  if(fs.existsSync('tmp/'+ platform +'.zip')){
-    this.log.info('Unzip %s files.', platform);
-    var unzipper = new DecompressZip('tmp/'+ platform +'.zip');
+  if ('.zip' === extension) {
+    if (fs.existsSync('tmp/' + platform + extension)) {
+      this.log.info('Unzip %s files.', platform);
+      var unzipper = new DecompressZip('tmp/' + platform + extension);
 
-    unzipper.on('error', function (error) {
-      _this.log.conflict('Error while unzipping "tmp/'+ platform +'.zip"', error);
-      defer.reject(error);
-    });
+      unzipper.on('error', function (error) {
+        _this.log.conflict('Error while unzipping "tmp/' + platform + extension + '"', error);
+        defer.reject(error);
+      });
 
-    unzipper.on('extract', function () {
-      _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
+      unzipper.on('extract', function () {
+        _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
+        defer.resolve();
+      });
+
+      unzipper.extract({
+        path: 'resources/node-webkit/' + platform
+      });
+    } else {
       defer.resolve();
-    });
-
-    unzipper.extract({
-      path: 'resources/node-webkit/' + platform
-    });
-  }else{
+    }
+  } else if ('.tar.gz' === extension) {
+    this.log.info('Un.tar.gz %s files.', platform);
+    var src = 'tmp/' + platform + extension;
+    var dst = 'resources/node-webkit/' + platform;
+    fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst));
     defer.resolve();
   }
   return defer.promise;
 };
-
 
 NodeWebkitGenerator.prototype._copyNodeWebkit = function _copyNodeWebkit(platform) {
   var _this = this;
