@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Quick Question
+GenericName=Communication and Collaboration tool
+Comment=Communication and Collaboration tool
+Exec=qq
+Icon=quickquestion
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Tool;
+X-Ubuntu-Gettext-Domain=tuxtype
