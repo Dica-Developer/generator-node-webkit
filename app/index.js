@@ -77,9 +77,7 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
     }, {
       name: 'Windows',
       checked: true
-    }, {
-      name: 'Linux 32'
-    }, ],
+    }],
     validate: function (answer) {
       if (answer.length < 1) {
         return 'You must choose at least one platform.';
@@ -155,9 +153,6 @@ NodeWebkitGenerator.prototype.app = function app() {
   if (this.MacOS) {
     this.mkdir('resources/node-webkit/MacOS');
   }
-  if (this.Linux32) {
-    this.mkdir('resources/node-webkit/Linux32');
-  }
   if (this.Linux64) {
     this.mkdir('resources/node-webkit/Linux64');
   }
@@ -182,9 +177,6 @@ NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit() {
   var promises = [];
   if (this.MacOS) {
     promises.push(this._requestNodeWebkit('osx-ia32', '.zip', 'MacOS'));
-  }
-  if (this.Linux32) {
-    promises.push(this._requestNodeWebkit('linux-ia32', '.tar.gz', 'Linux32'));
   }
   if (this.Linux64) {
     promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz', 'Linux64'));
@@ -244,9 +236,6 @@ NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit() {
 
   if (this.MacOS) {
     promises.push(this._extract('MacOS', '.zip'));
-  }
-  if (this.Linux32) {
-    promises.push(this._extract('Linux32', '.tar.gz'));
   }
   if (this.Linux64) {
     promises.push(this._extract('Linux64', '.tar.gz'));
@@ -331,7 +320,7 @@ NodeWebkitGenerator.prototype._cleanUp = function _cleanUp(platform) {
     });
     break;
   default:
-    this.log.ok('No files to copy');
+    this.log.ok('No files to clean.');
   }
 };
 
@@ -348,6 +337,6 @@ NodeWebkitGenerator.prototype.copyFiles = function copyFiles() {
   this.template('app/_package.json', 'app/package.json');
   this.template('app/_index.html', 'app/views/index.html');
   this.template('_Gruntfile.js', 'Gruntfile.js');
-  this.template('mac-files/_Info.plist.tmp', 'resources/mac-files/Info.plist.tmp');
-  this.template('mac-files/_Info.plist', 'resources/mac-files/Info.plist');
+  this.template('mac/_Info.plist.tmp', 'resources/mac/Info.plist.tmp');
+  this.template('mac/_Info.plist', 'resources/mac/Info.plist');
 };
