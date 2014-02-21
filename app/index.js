@@ -41,7 +41,7 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
   });
 
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
-  this.nodeWebkitBaseUrl = 'https://s3.amazonaws.com/node-webkit/v0.7.5/node-webkit-v0.7.5-';
+  this.nodeWebkitBaseUrl = 'https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-';
 };
 
 util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
