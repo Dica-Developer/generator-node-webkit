@@ -22,16 +22,16 @@
     "test": "mocha"
   },
   "dependencies": {
-    "yeoman-generator": "~0.13.4",
-    "fs-extra": "~0.6.4",
-    "when": "~2.4.0",
+    "yeoman-generator": "~0.16.0",
+    "fs-extra": "~0.8.1",
+    "when": "~2.8.0",
     "github": "~0.1.12",
     "decompress-zip": "~0.0.2",
     "tar-fs": "~0.2.2",
-    "mocha": "~1.12.1"
+    "mocha": "~1.17.1"
   },
   "devDependencies": {
-    "mocha": "~1.12.1"
+    "mocha": "~1.17.1",
   },
   "peerDependencies": {
     "yo": ">=1.0.0"
