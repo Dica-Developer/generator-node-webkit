@@ -1,4 +1,4 @@
-# generator-node-webkit [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
+# generator-node-webkit [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)[![Dependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit.png)](https://david-dm.org/Dica-Developer/generator-node-webkit)[![devDependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit/dev-status.png)](https://david-dm.org/Dica-Developer/generator-node-webkit#info=devDependencies)
 
 A generator for [Yeoman](http://yeoman.io).
 
@@ -8,8 +8,6 @@ A generator for [Yeoman](http://yeoman.io).
 ### What is Yeoman?
 
 Trick question. It's not a thing. It's this guy:
-
-![](http://i.imgur.com/JHaAlBJ.png)
 
 Basically, he wears a top hat, lives in your computer, and waits for you to tell him what kind of application you wish to create.
 
