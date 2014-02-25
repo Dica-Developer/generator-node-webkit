@@ -31,7 +31,7 @@
     "mocha": "~1.17.1"
   },
   "devDependencies": {
-    "mocha": "~1.17.1",
+    "mocha": "~1.17.1"
   },
   "peerDependencies": {
     "yo": ">=1.0.0"
