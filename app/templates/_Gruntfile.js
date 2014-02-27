@@ -149,7 +149,7 @@ module.exports = function (grunt) {
     var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\QuickQuestion.exe && del tmp\\app.nw tmp\\nw.exe', function (error, stdout, stderr) {
+    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\<%= appName %>.exe && del tmp\\app.nw tmp\\nw.exe', function (error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
