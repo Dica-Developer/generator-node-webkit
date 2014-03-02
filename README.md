@@ -1,4 +1,5 @@
-# generator-node-webkit [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)[![Dependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit.png)](https://david-dm.org/Dica-Developer/generator-node-webkit)[![devDependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit/dev-status.png)](https://david-dm.org/Dica-Developer/generator-node-webkit#info=devDependencies)
+# generator-node-webkit
+[![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)[![Dependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit.png)](https://david-dm.org/Dica-Developer/generator-node-webkit)[![devDependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit/dev-status.png)](https://david-dm.org/Dica-Developer/generator-node-webkit#info=devDependencies)
 
 A generator for [Yeoman](http://yeoman.io).
 
