@@ -339,4 +339,7 @@ NodeWebkitGenerator.prototype.copyFiles = function copyFiles() {
   this.template('_Gruntfile.js', 'Gruntfile.js');
   this.template('mac/_Info.plist.tmp', 'resources/mac/Info.plist.tmp');
   this.template('mac/_Info.plist', 'resources/mac/Info.plist');
+  this.copy('mac/dmgStyler.applescript', 'resources/mac/dmgStyler.applescript');
+  this.copy('mac/package.sh', 'resources/mac/package.sh');
+  this.copy('mac/background.png', 'resources/mac/background.png');
 };
