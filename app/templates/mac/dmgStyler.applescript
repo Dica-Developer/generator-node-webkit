@@ -9,7 +9,7 @@ tell application "Finder"
     set theViewOptions to the icon view options of container window
     set arrangement of theViewOptions to not arranged
     set icon size of theViewOptions to 64
-    set background picture of theViewOptions to POSIX file "/Volumes/" & appName & "/.background/background.png"
+    set background picture of theViewOptions to POSIX file ("/Volumes/" & appName & "/.background/background.png")
     set position of item (appName & ".app") of container window to {225, 40}
     set position of item "Applications" of container window to {375, 40}
     set position of item ".DS_Store" of container window to {400, 400}
