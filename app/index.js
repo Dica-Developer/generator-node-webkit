@@ -53,38 +53,47 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
   // have Yeoman greet the user.
   console.log(this.yeoman);
 
-  var prompts = [{
-    name: 'appName',
-    message: 'What do you want to call your app?',
-    default: appName
-  }, {
-    name: 'appDescription',
-    message: 'A little description for your app?'
-  }, {
-    name: 'githubUser',
-    message: 'Would you mind telling me your username on GitHub?',
-    default: 'someuser'
-  }, {
-    type: 'checkbox',
-    name: 'platforms',
-    message: 'Which platform do you wanna support?',
-    choices: [{
-      name: 'MacOS',
-      checked: true
-    }, {
-      name: 'Linux 64',
-      checked: true
-    }, {
-      name: 'Windows',
-      checked: true
-    }],
-    validate: function (answer) {
-      if (answer.length < 1) {
-        return 'You must choose at least one platform.';
+  var prompts = [
+    {
+      name: 'appName',
+      message: 'What do you want to call your app?',
+      default: appName
+    },
+    {
+      name: 'appDescription',
+      message: 'A little description for your app?'
+    },
+    {
+      name: 'githubUser',
+      message: 'Would you mind telling me your username on GitHub?',
+      default: 'someuser'
+    },
+    {
+      type: 'checkbox',
+      name: 'platforms',
+      message: 'Which platform do you wanna support?',
+      choices: [
+        {
+          name: 'MacOS',
+          checked: true
+        },
+        {
+          name: 'Linux 64',
+          checked: true
+        },
+        {
+          name: 'Windows',
+          checked: true
+        }
+      ],
+      validate: function (answer) {
+        if (answer.length < 1) {
+          return 'You must choose at least one platform.';
+        }
+        return true;
       }
-      return true;
     }
-  }];
+  ];
 
   this.prompt(prompts, function (props) {
     var _this = this;
@@ -193,26 +202,26 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
     contentType = extension === '.zip' ? 'application/zip' : 'application/x-tar';
   if (!fs.existsSync('tmp/' + platform + extension)) {
     this.log.info('Downloading node-webkit for ' + platform);
-    https.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
+    https.get(this.nodeWebkitBaseUrl + versionString + extension,function (res) {
       console.log(res.headers['content-type']);
       if (res.headers['content-type'] === contentType) {
-        res.on('data', function (chunk) {
+        res.on('data',function (chunk) {
           fs.appendFileSync('tmp/' + platform + extension, chunk);
-        }).on('end', function () {
-          _this.log.ok('Node-webkit for ' + platform + ' downloaded');
-          defer.resolve();
-        }).on('error', function (error) {
-          _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-          defer.reject(error);
-        });
+        }).on('end',function () {
+            _this.log.ok('Node-webkit for ' + platform + ' downloaded');
+            defer.resolve();
+          }).on('error', function (error) {
+            _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+            defer.reject(error);
+          });
       } else {
         _this.log.conflict('Wrong content type for %s', platform);
         defer.reject('Wrong content type for ' + platform);
       }
     }).on('error', function (error) {
-      _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-      defer.reject(error);
-    });
+        _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+        defer.reject(error);
+      });
   } else {
     this.log.ok('Node-webkit for ' + platform + ' already downloaded');
     defer.resolve();
