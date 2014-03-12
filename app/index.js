@@ -9,7 +9,6 @@ var url = require('url');
 var GitHubApi = require('github');
 var DecompressZip = require('decompress-zip');
 var tar = require('tar-fs');
-var fs = require('fs');
 var zlib = require('zlib');
 
 /*jshint camelcase: false*/
