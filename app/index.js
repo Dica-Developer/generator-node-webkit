@@ -1,4 +1,6 @@
+/*global require*/
 'use strict';
+
 var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
@@ -68,6 +70,12 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
       default: 'someuser'
     },
     {
+      type: 'confirm',
+      name: 'downloadNodeWebkit',
+      message: 'Do you want to download latest node-webkit?',
+      default: true
+    },
+    {
       type: 'checkbox',
       name: 'platforms',
       message: 'Which platform do you wanna support?',
@@ -85,6 +93,9 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
           checked: true
         }
       ],
+      when: function (answers) {
+        return answers.downloadNodeWebkit;
+      },
       validate: function (answer) {
         if (answer.length < 1) {
           return 'You must choose at least one platform.';
@@ -100,28 +111,31 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
     this.appDescription = props.appDescription;
     this.platforms = props.platforms;
     this.githubUser = props.githubUser;
+    this.downloadNodeWebkit = props.downloadNodeWebkit;
     this.MacOS = false;
     this.Linux32 = false;
     this.Linux64 = false;
     this.Windows = false;
     this.github = false;
 
-    props.platforms.forEach(function (platform) {
-      switch (platform) {
-      case 'MacOS':
-        _this.MacOS = true;
-        break;
-      case 'Linux 32':
-        _this.Linux32 = true;
-        break;
-      case 'Linux 64':
-        _this.Linux64 = true;
-        break;
-      case 'Windows':
-        _this.Windows = true;
-        break;
-      }
-    });
+    if (props.downloadNodeWebkit) {
+      props.platforms.forEach(function (platform) {
+        switch (platform) {
+        case 'MacOS':
+          _this.MacOS = true;
+          break;
+        case 'Linux 32':
+          _this.Linux32 = true;
+          break;
+        case 'Linux 64':
+          _this.Linux64 = true;
+          break;
+        case 'Windows':
+          _this.Windows = true;
+          break;
+        }
+      });
+    }
     done();
   }.bind(this));
 };
@@ -172,13 +186,36 @@ NodeWebkitGenerator.prototype.app = function app() {
 
 NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit() {
   var done = this.async();
+
   var successClbk = function () {
     done();
   };
   var failureClbk = function (error) {
     throw error;
   };
-  when.all(this._getNodeWebkit(), successClbk, failureClbk);
+  if (this.downloadNodeWebkit) {
+    when.all(this._getNodeWebkit(), successClbk, failureClbk);
+  } else {
+    when.all(this._createFolder(), successClbk, failureClbk);
+  }
+};
+
+NodeWebkitGenerator.prototype._createFolder = function _createFolder() {
+  var promises = [];
+  var basePath = 'resources/node-webkit/';
+  var platforms = ['MacOS', 'Linux64', 'Windows'];
+  platforms.forEach(function (platform) {
+    var defer = when.defer();
+    promises.push(defer.promise);
+    fs.mkdirs(basePath + '/' + platform, function (err) {
+      if (err) {
+        defer.reject(err);
+      } else {
+        defer.resolve();
+      }
+    });
+  });
+  return promises;
 };
 
 NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit() {
