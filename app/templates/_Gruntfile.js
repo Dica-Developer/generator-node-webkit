@@ -60,6 +60,11 @@ module.exports = function (grunt) {
           dest: '<%%= config.dist %>/node-webkit.app/Contents/Resources/',
           filter: 'isFile',
           src: '*.icns'
+        },{
+          expand: true,
+          cwd: '<%= config.app %>/../node_modules/',
+          dest: '<%= config.dist %>/node-webkit.app/Contents/Resources/app.nw/node_modules/',
+          src: '**'
         }]
       },
       webkit: {
