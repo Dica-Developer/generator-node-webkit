@@ -314,8 +314,19 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
     this.log.info('Un.tar.gz %s files.', platform);
     var src = 'tmp/' + platform + extension;
     var dst = 'resources/node-webkit/' + platform;
-    fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst));
-    defer.resolve();
+    fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function(error){
+      if(!error){
+        fs.copy('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64', 'resources/node-webkit/' + platform, function(error){
+          if (error) {
+            _this.log.conflict('Error while copying files for ' + platform + '!', error);
+          } else {
+            _this.log.ok('%s files successfully copied.', platform);
+            fs.removeSync('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64');
+            defer.resolve();
+          }
+        });
+      }
+    });
   }
   return defer.promise;
 };
