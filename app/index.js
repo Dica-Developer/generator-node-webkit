@@ -5,7 +5,7 @@ var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var when = require('when');
-var https = require('https');
+var http = require('http');
 var fs = require('fs-extra');
 var url = require('url');
 var GitHubApi = require('github');
@@ -42,7 +42,7 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
   });
 
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
-  this.nodeWebkitBaseUrl = 'https://s3.amazonaws.com/node-webkit/v0.9.2/node-webkit-v0.9.2-';
+  this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/v0.9.2/node-webkit-v0.9.2-';
 };
 
 util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
@@ -231,10 +231,10 @@ NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit() {
 NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(versionString, extension, platform) {
   var defer = when.defer(),
     _this = this,
-    contentType = extension === '.zip' ? 'application/zip' : 'application/x-tar';
+    contentType = extension === '.zip' ? 'application/zip' : 'application/octet-stream';
   if (!fs.existsSync('tmp/' + platform + extension)) {
     this.log.info('Downloading node-webkit for ' + platform);
-    https.get(this.nodeWebkitBaseUrl + versionString + extension,function (res) {
+    http.get(this.nodeWebkitBaseUrl + versionString + extension,function (res) {
       if (res.headers['content-type'] === contentType) {
         res.on('data',function (chunk) {
           fs.appendFileSync('tmp/' + platform + extension, chunk);
