@@ -22,7 +22,7 @@
     "test": "mocha"
   },
   "dependencies": {
-    "yeoman-generator": "~0.16.0",
+    "yeoman-generator": "^0.17.0-pre.3",
     "fs-extra": "~0.8.1",
     "when": "~2.8.0",
     "github": "~0.1.12",
