@@ -54,56 +54,52 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
   // have Yeoman greet the user.
   console.log(this.yeoman);
 
-  var prompts = [
-    {
-      name: 'appName',
-      message: 'What do you want to call your app?',
-      default: appName
-    },
-    {
-      name: 'appDescription',
-      message: 'A little description for your app?'
-    },
-    {
-      name: 'githubUser',
-      message: 'Would you mind telling me your username on GitHub?',
-      default: 'someuser'
-    },
-    {
-      type: 'confirm',
-      name: 'downloadNodeWebkit',
-      message: 'Do you want to download latest node-webkit?',
-      default: true
-    },
-    {
-      type: 'checkbox',
-      name: 'platforms',
-      message: 'Which platform do you wanna support?',
-      choices: [
-        {
-          name: 'MacOS',
-          checked: true
-        },
-        {
-          name: 'Linux 64',
-          checked: true
-        },
-        {
-          name: 'Windows',
-          checked: true
-        }
-      ],
-      when: function (answers) {
-        return answers.downloadNodeWebkit;
-      },
-      validate: function (answer) {
-        if (answer.length < 1) {
-          return 'You must choose at least one platform.';
-        }
-        return true;
+  var prompts = [{
+    name: 'appName',
+    message: 'What do you want to call your app? Allowed characters ^[a-zA-Z0-9]+$',
+    default: appName,
+    validate: function (answer) {
+      if (!/^[a-zA-Z0-9]+$/.test(answer)) {
+        return 'The application name should only consist of the following characters a-z, A-Z and 0-9.';
       }
+      return true;
     }
-  ];
+  }, {
+    name: 'appDescription',
+    message: 'A little description for your app?'
+  }, {
+    name: 'githubUser',
+    message: 'Would you mind telling me your username on GitHub?',
+    default: 'someuser'
+  }, {
+    type: 'confirm',
+    name: 'downloadNodeWebkit',
+    message: 'Do you want to download latest node-webkit?',
+    default: true
+  }, {
+    type: 'checkbox',
+    name: 'platforms',
+    message: 'Which platform do you wanna support?',
+    choices: [{
+      name: 'MacOS',
+      checked: true
+    }, {
+      name: 'Linux 64',
+      checked: true
+    }, {
+      name: 'Windows',
+      checked: true
+    }],
+    when: function (answers) {
+      return answers.downloadNodeWebkit;
+    },
+    validate: function (answer) {
+      if (answer.length < 1) {
+        return 'You must choose at least one platform.';
+      }
+      return true;
+    }
+  }];
 
   this.prompt(prompts, function (props) {
     var _this = this;
