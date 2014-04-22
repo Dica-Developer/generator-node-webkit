@@ -230,25 +230,25 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
     contentType = extension === '.zip' ? 'application/zip' : 'application/octet-stream';
   if (!fs.existsSync('tmp/' + platform + extension)) {
     this.log.info('Downloading node-webkit for ' + platform);
-    http.get(this.nodeWebkitBaseUrl + versionString + extension,function (res) {
+    http.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
       if (res.headers['content-type'] === contentType) {
-        res.on('data',function (chunk) {
+        res.on('data', function (chunk) {
           fs.appendFileSync('tmp/' + platform + extension, chunk);
-        }).on('end',function () {
-            _this.log.ok('Node-webkit for ' + platform + ' downloaded');
-            defer.resolve();
-          }).on('error', function (error) {
-            _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-            defer.reject(error);
-          });
+        }).on('end', function () {
+          _this.log.ok('Node-webkit for ' + platform + ' downloaded');
+          defer.resolve();
+        }).on('error', function (error) {
+          _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+          defer.reject(error);
+        });
       } else {
         _this.log.conflict('Wrong content type for %s', platform);
         defer.reject('Wrong content type for ' + platform);
       }
     }).on('error', function (error) {
-        _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-        defer.reject(error);
-      });
+      _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+      defer.reject(error);
+    });
   } else {
     this.log.ok('Node-webkit for ' + platform + ' already downloaded');
     defer.resolve();
@@ -310,9 +310,9 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
     this.log.info('Un.tar.gz %s files.', platform);
     var src = 'tmp/' + platform + extension;
     var dst = 'resources/node-webkit/' + platform;
-    fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function(error){
-      if(!error){
-        fs.copy('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64', 'resources/node-webkit/' + platform, function(error){
+    fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function (error) {
+      if (!error) {
+        fs.copy('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64', 'resources/node-webkit/' + platform, function (error) {
           if (error) {
             _this.log.conflict('Error while copying files for ' + platform + '!', error);
           } else {
