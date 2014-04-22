@@ -13,7 +13,7 @@
 	<string>© <%= realname %>, 2013</string>
 	<% } %>
 	<key>CFBundleIconFile</key>
-	<string>icon.icns</string>
+	<string>nw.icns</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
