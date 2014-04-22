@@ -1,9 +1,8 @@
 /*global describe, beforeEach, it*/
 'use strict';
 
-var path    = require('path');
+var path = require('path');
 var helpers = require('yeoman-generator').test;
-
 
 describe('node-webkit generator', function () {
   beforeEach(function (done) {
@@ -35,7 +34,7 @@ describe('node-webkit generator', function () {
     ];
 
     this.app.run({}, function () {
-      helpers.assertFiles(expected);
+      helpers.assertFile(expected);
       done();
     });
   });
@@ -49,7 +48,7 @@ describe('node-webkit generator', function () {
     ];
 
     this.app.run({}, function () {
-      helpers.assertFiles(expected);
+      helpers.assertFile(expected);
       done();
     });
   });
