@@ -31,7 +31,8 @@
     "decompress-zip": "0.0.5"
   },
   "devDependencies": {
-    "mocha": "~1.17.1"
+    "mocha": "~1.17.1",
+    "temp": "^0.7.0"
   },
   "peerDependencies": {
     "yo": ">=1.0.0"
