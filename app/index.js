@@ -137,11 +137,13 @@ NodeWebkitGenerator.prototype.userInfo = function userInfo() {
   var _this = this;
   var responseClbk = function (err, responseText) {
     if (err) {
-      _this.log.conflict(err);
-      throw err;
+      _this.log.info('Error while fetching github user information.', err);
+      _this.log.skip('Skip fetching github user information.');
+      done();
     } else {
       var responseObject = JSON.parse(JSON.stringify(responseText));
       _this.log.ok('Github informations successfully retrieved.');
+      _this.github = true;
       _this.realname = responseObject.name;
       _this.email = responseObject.email;
       _this.githubUrl = responseObject.html_url;
@@ -151,7 +153,6 @@ NodeWebkitGenerator.prototype.userInfo = function userInfo() {
 
   if (this.githubUser !== 'someuser') {
     this.log.info('Get GitHub informations');
-    this.github = true;
     github.user.getFrom({
       user: this.githubUser
     }, responseClbk);
