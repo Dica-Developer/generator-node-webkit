@@ -186,9 +186,9 @@ NodeWebkitGenerator.prototype.getNodeWebkit = function getNodeWebkit() {
     throw error;
   };
   if (this.downloadNodeWebkit) {
-    when.all(this._getNodeWebkit(), successClbk, failureClbk);
+    when.all(this._getNodeWebkit()).then(successClbk, failureClbk);
   } else {
-    when.all(this._createFolder(), successClbk, failureClbk);
+    when.all(this._createFolder()).then(successClbk, failureClbk);
   }
 };
 
@@ -264,7 +264,7 @@ NodeWebkitGenerator.prototype.unzipNodeWebkit = function unzipNodeWebkit() {
   var failureClbk = function (error) {
     throw error;
   };
-  when.all(this._unzipNodeWebkit(), successClbk, failureClbk);
+  when.all(this._unzipNodeWebkit()).then(successClbk, failureClbk);
 };
 
 NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit() {
