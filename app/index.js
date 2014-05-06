@@ -320,8 +320,7 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
           if (error) {
             defer.reject(error);
           } else {
-            _this.log.ok('%s files successfully copied.', platform);
-            fs.removeSync('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64');
+            fs.remove('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64');
             _this.log.ok('%s directory successfully copied.', platform);
             defer.resolve();
           }
