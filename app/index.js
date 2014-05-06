@@ -334,49 +334,6 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
   return defer.promise;
 };
 
-NodeWebkitGenerator.prototype._copyNodeWebkit = function _copyNodeWebkit(platform) {
-  var _this = this;
-  this.log.info('Copy %s files.', platform);
-  switch (platform) {
-  case 'MacOS':
-    fs.copy('tmp/mac/node-webkit.app', 'resources/node-webkit/mac/node-webkit.app', function (error) {
-      if (error) {
-        _this.log.conflict('Error while copying files for ' + platform + '!', error);
-      } else {
-        _this.log.ok('%s files successfully copied.', platform);
-      }
-    });
-    break;
-  default:
-    this.log.ok('No files to copy');
-  }
-};
-
-NodeWebkitGenerator.prototype._cleanUp = function _cleanUp(platform) {
-  var _this = this;
-  this.log.info('Cleaning up tmp directories for %s.', platform);
-  switch (platform) {
-  case 'MacOS':
-    fs.remove('tmp/mac', function (error) {
-      if (error) {
-        _this.log.conflict('Error while deleting tmp directory for ' + platform + '!', error);
-      } else {
-        _this.log.ok('Tmp directory for %s successfully removed.', platform);
-      }
-    });
-    fs.remove('tmp/node-webkit-osx-ia32.zip', function (error) {
-      if (error) {
-        _this.log.conflict('Error while deleting zip file for ' + platform + '!', error);
-      } else {
-        _this.log.ok('Zip file for %s successfully removed.', platform);
-      }
-    });
-    break;
-  default:
-    this.log.ok('No files to clean.');
-  }
-};
-
 NodeWebkitGenerator.prototype.projectfiles = function projectfiles() {
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
