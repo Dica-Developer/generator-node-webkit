@@ -1,4 +1,4 @@
-/*global describe, beforeEach, it*/
+/*global describe, beforeEach, it, after*/
 'use strict';
 
 var path = require('path');
@@ -14,7 +14,7 @@ describe('Test prompt validations', function () {
     temp.cleanup();
   });
 
-  it('App name has invalid character and should fail', function(done){
+  it('App name has invalid character and should fail', function (done) {
     var workspace = temp.mkdirSync();
     helpers.testDirectory(workspace, function (err) {
       if (err) {
