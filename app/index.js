@@ -226,16 +226,15 @@ NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit() {
 };
 
 NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(versionString, extension, platform) {
-  var defer = when.defer(),
-    _this = this,
-    contentType = extension === '.zip' ? 'application/zip' : 'application/octet-stream';
+  var defer = when.defer();
+  var _this = this;
   if (!fs.existsSync('tmp/' + platform + extension)) {
     if (fs.existsSync('tmp/' + platform + extension + '.part')) {
       fs.unlinkSync('tmp/' + platform + extension + '.part');
     }
     this.log.info('Downloading node-webkit for ' + platform);
     http.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
-      if (res.headers['content-type'] === contentType) {
+      if (200 === res.statusCode) {
         res.on('data', function (chunk) {
           fs.appendFileSync('tmp/' + platform + extension + '.part', chunk);
         }).on('end', function () {
@@ -319,13 +318,16 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
       if (!error) {
         fs.copy('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64', 'resources/node-webkit/' + platform, function (error) {
           if (error) {
-            _this.log.conflict('Error while copying files for ' + platform + '!', error);
+            defer.reject(error);
           } else {
             _this.log.ok('%s files successfully copied.', platform);
             fs.removeSync('resources/node-webkit/' + platform + '/node-webkit-v0.9.2-linux-x64');
+            _this.log.ok('%s directory successfully copied.', platform);
             defer.resolve();
           }
         });
+      } else {
+        defer.reject(error);
       }
     });
   }
