@@ -230,12 +230,16 @@ NodeWebkitGenerator.prototype._requestNodeWebkit = function _requestNodeWebkit(v
     _this = this,
     contentType = extension === '.zip' ? 'application/zip' : 'application/octet-stream';
   if (!fs.existsSync('tmp/' + platform + extension)) {
+    if (fs.existsSync('tmp/' + platform + extension + '.part')) {
+      fs.unlinkSync('tmp/' + platform + extension + '.part');
+    }
     this.log.info('Downloading node-webkit for ' + platform);
     http.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
       if (res.headers['content-type'] === contentType) {
         res.on('data', function (chunk) {
-          fs.appendFileSync('tmp/' + platform + extension, chunk);
+          fs.appendFileSync('tmp/' + platform + extension + '.part', chunk);
         }).on('end', function () {
+          fs.renameSync('tmp/' + platform + extension + '.part', 'tmp/' + platform + extension);
           _this.log.ok('Node-webkit for ' + platform + ' downloaded');
           defer.resolve();
         }).on('error', function (error) {
