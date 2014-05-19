@@ -35,10 +35,10 @@ describe('Test prompt validations', function () {
       app.options['skip-install'] = true;
 
       app.run({}, function () {
-        assert.ok(typeof app.errors !== 'undefined', 'This should fail if the app name contains a space.');
-        assert.ok(app.errors.length === 1, 'There should be only 1 error.');
-        assert.ok(app.errors[0].name === 'appName', 'The appName property should be wrong.');
-        assert.ok(app.errors[0].message === 'The application name should only consist of the following characters a-z, A-Z and 0-9.', 'The appName property should be wrong.');
+        assert.ok(typeof app.prompt.errors !== 'undefined', 'This should fail if the app name contains a space.');
+        assert.ok(app.prompt.errors.length === 1, 'There should be only 1 error.');
+        assert.ok(app.prompt.errors[0].name === 'appName', 'The appName property should be wrong.');
+        assert.ok(app.prompt.errors[0].message === 'The application name should only consist of the following characters a-z, A-Z and 0-9.', 'The appName property should be wrong.');
         done();
       });
     });
