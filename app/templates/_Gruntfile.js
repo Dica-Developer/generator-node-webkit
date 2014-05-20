@@ -152,21 +152,38 @@ module.exports = function (grunt) {
 
   grunt.registerTask('createWindowsApp', 'Create windows distribution.', function () {
     var done = this.async();
-    var childProcess = require('child_process');
-    var exec = childProcess.exec;
-    exec('copy /b tmp\\nw.exe+tmp\\app.nw tmp\\<%= appName %>.exe && del tmp\\app.nw tmp\\nw.exe', function (error, stdout, stderr) {
-      var result = true;
-      if (stdout) {
-        grunt.log.write(stdout);
-      }
-      if (stderr) {
-        grunt.log.write(stderr);
-      }
-      if (error !== null) {
-        grunt.log.error(error);
-        result = false;
-      }
-      done(result);
+    var concat = require('concat-files');
+    concat([
+      'tmp/nw.exe',
+      'tmp/app.nw',
+    ], 'tmp/<%= appName %>.exe', function () {
+      var fs = require('fs');
+      fs.unlink('tmp/app.nw', function (error, stdout, stderr) {
+        if (stdout) {
+          grunt.log.write(stdout);
+        }
+        if (stderr) {
+          grunt.log.write(stderr);
+        }
+        if (error !== null) {
+          grunt.log.error(error);
+        } else {
+          fs.unlink('tmp/nw.exe', function (error, stdout, stderr) {
+            var result = true;
+            if (stdout) {
+              grunt.log.write(stdout);
+            }
+            if (stderr) {
+              grunt.log.write(stderr);
+            }
+            if (error !== null) {
+              grunt.log.error(error);
+              result = false;
+            }
+            done(result);
+          });
+        }
+      });
     });
   });
 
