@@ -46,7 +46,7 @@ describe('Test prompt validations', function () {
   });
 });
 
-describe('Test github prompt', function(){
+describe('Test github prompt', function () {
   var app;
 
   after(function () {
