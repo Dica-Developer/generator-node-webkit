@@ -8,7 +8,7 @@
     "bugs": "<%= githubUrl %>/<%= _.slugify(appName) %>/issues",
     "author": {
       "name": "<%= realname %>",
-      "email": "<%= email %>",
+      "email": "",
       "url": "<%= githubUrl %>"
     },
     "repository": {
