@@ -146,7 +146,6 @@ NodeWebkitGenerator.prototype.userInfo = function userInfo() {
       _this.log.ok('Github informations successfully retrieved.');
       _this.github = true;
       _this.realname = responseObject.name;
-      _this.email = responseObject.email;
       _this.githubUrl = responseObject.html_url;
       done();
     }
