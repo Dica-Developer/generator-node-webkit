@@ -172,6 +172,36 @@ describe('Test github prompt', function () {
       });
     });
   });
+
+  it('Should no entry in package.json if no github information are available', function (done) {
+    var workspace = temp.mkdirSync();
+    helpers.testDirectory(workspace, function (err) {
+      if (err) {
+        return done(err);
+      }
+
+      app = helpers.createGenerator('node-webkit:app', [
+        path.resolve(__dirname, '../app')
+      ]);
+
+      helpers.mockPrompt(app, {
+        'appName': 'TestApp',
+        'appDescription': 'Test App Description',
+        'githubUser': 'someuser',
+        downloadNodeWebkit: false,
+        'platforms': ['Linux64']
+      });
+      app.options['skip-install'] = true;
+      app.run({}, function () {
+        var packageJson = fs.readJsonFileSync('package.json');
+        assert.equal(packageJson.author, void 0, 'Should fail if author name is not "undefined"');
+        assert.equal(packageJson.homepage, void 0, 'Should fail if homepage is not "undefined"');
+        assert.equal(packageJson.bugs, void 0, 'Should fail if bugs url is not "undefined"');
+        done();
+      });
+    });
+  });
+
 });
 
 
