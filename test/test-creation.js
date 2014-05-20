@@ -164,7 +164,6 @@ describe('Test github prompt', function(){
       app.options['skip-install'] = true;
       app.run({}, function () {
         var packageJson = fs.readJsonFileSync('package.json');
-        console.log(packageJson);
         assert.equal(packageJson.author.name, 'Jörg Weber', 'Should fail if author name is not "Jörg Weber"');
         assert.equal(packageJson.author.url, 'https://github.com/JayGray', 'Should fail if author url is not "https://github.com/JayGray"');
         assert.equal(packageJson.homepage, 'https://github.com/JayGray/testapp', 'Should fail if homepage is not "https://github.com/JayGray/testapp"');
