@@ -167,6 +167,7 @@ module.exports = function (grunt) {
         }
         if (error !== null) {
           grunt.log.error(error);
+          done(false);
         } else {
           fs.unlink('tmp/nw.exe', function (error, stdout, stderr) {
             var result = true;
