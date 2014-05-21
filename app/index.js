@@ -366,22 +366,22 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
   return defer.promise;
 };
 
-NodeWebkitGenerator.prototype.projectfiles = function projectfiles() {
+NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles() {
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
-};
-
-NodeWebkitGenerator.prototype.copyFiles = function copyFiles() {
   this.copy('_bower.json', 'bower.json');
-  this.copy('app/_main.css', 'app/css/main.css');
-  this.copy('app/_index.js', 'app/js/index.js');
-  this.template('_package.json', 'package.json');
-  this.template('app/_package.json', 'app/package.json');
-  this.template('app/_index.html', 'app/views/index.html');
-  this.template('_Gruntfile.js', 'Gruntfile.js');
-  this.template('mac/_Info.plist.tmp', 'resources/mac/Info.plist.tmp');
-  this.template('mac/_Info.plist', 'resources/mac/Info.plist');
   this.copy('mac/dmgStyler.applescript', 'resources/mac/dmgStyler.applescript');
   this.copy('mac/package.sh', 'resources/mac/package.sh');
   this.copy('mac/background.png', 'resources/mac/background.png');
+  this.template('_package.json', 'package.json');
+  this.template('_Gruntfile.js', 'Gruntfile.js');
+  this.template('mac/_Info.plist.tmp', 'resources/mac/Info.plist.tmp');
+  this.template('mac/_Info.plist', 'resources/mac/Info.plist');
+};
+
+NodeWebkitGenerator.prototype.processAppFiles = function processAppFiles() {
+  this.copy('app/_main.css', 'app/css/main.css');
+  this.copy('app/_index.js', 'app/js/index.js');
+  this.template('app/_package.json', 'app/package.json');
+  this.template('app/_index.html', 'app/views/index.html');
 };
