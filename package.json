@@ -32,7 +32,8 @@
   },
   "devDependencies": {
     "mocha": "~1.19.0",
-    "temp": "^0.7.0"
+    "temp": "^0.7.0",
+    "request": "^2.36.0"
   },
   "peerDependencies": {
     "yo": ">=1.0.0"
