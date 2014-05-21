@@ -13,6 +13,8 @@ var DecompressZip = require('decompress-zip');
 var tar = require('tar-fs');
 var zlib = require('zlib');
 
+var Examples = require('./examples.js');
+
 var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
 
@@ -157,6 +159,52 @@ NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNo
     done();
   }.bind(this));
 };
+
+NodeWebkitGenerator.prototype.askForInstallExamples = function askForInstallExamples() {
+  var done = this.async();
+  var prompts = [
+    {
+      type: 'confirm',
+      name: 'installExamples',
+      message: 'Do you want to install one of the node-webkit examples?',
+      default: false
+    }
+  ];
+  this.prompt(prompts, function (props) {
+    this.installExamples = props.installExamples;
+    done();
+  }.bind(this));
+
+};
+
+NodeWebkitGenerator.prototype.getExampleList = function getExampleList() {
+  var done = this.async();
+  if (this.installExamples) {
+    var prompts = [
+      {
+        type: 'list',
+        name: 'example',
+        message: 'Which example do you want to install?',
+        choices: []
+      }
+    ];
+
+    this.examplesAPI = new Examples(this);
+    this.log.info('Getting list of available examples.');
+    this.examplesAPI.getExampleList()
+      .then(function (list) {
+        prompts[0].choices = list;
+
+        this.prompt(prompts, function (props) {
+          this.example = props.example;
+          done();
+        }.bind(this));
+      }.bind(this));
+  } else {
+    done();
+  }
+};
+
 
 NodeWebkitGenerator.prototype.getGithubUserInfo = function getGithubUserInfo() {
   var done = this.async();
@@ -384,8 +432,17 @@ NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles
 };
 
 NodeWebkitGenerator.prototype.processAppFiles = function processAppFiles() {
-  this.copy('app/_main.css', 'app/css/main.css');
-  this.copy('app/_index.js', 'app/js/index.js');
-  this.template('app/_package.json', 'app/package.json');
-  this.template('app/_index.html', 'app/views/index.html');
+  var done = this.async();
+  if (this.installExamples) {
+    this.examplesAPI.downloadAndInstallExamples(this.example)
+      .then(function () {
+        done();
+      });
+  } else {
+    this.copy('app/_main.css', 'app/css/main.css');
+    this.copy('app/_index.js', 'app/js/index.js');
+    this.template('app/_package.json', 'app/package.json');
+    this.template('app/_index.html', 'app/views/index.html');
+    done();
+  }
 };
