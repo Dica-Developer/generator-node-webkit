@@ -43,7 +43,7 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
 
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
   this.nodeWebkitVersion = 'v0.9.2';
-  this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/'+ this.nodeWebkitVersion +'/node-webkit-'+ this.nodeWebkitVersion +'-';
+  this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
 };
 
 util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
@@ -316,11 +316,11 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
     var dst = 'resources/node-webkit/' + platform;
     fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function (error) {
       if (!error) {
-        fs.copy('resources/node-webkit/' + platform + '/node-webkit-'+ _this.nodeWebkitVersion +'-linux-x64', 'resources/node-webkit/' + platform, function (error) {
+        fs.copy('resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + '-linux-x64', 'resources/node-webkit/' + platform, function (error) {
           if (error) {
             defer.reject(error);
           } else {
-            fs.remove('resources/node-webkit/' + platform + '/node-webkit-'+ _this.nodeWebkitVersion +'-linux-x64');
+            fs.remove('resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + '-linux-x64');
             _this.log.ok('%s directory successfully copied.', platform);
             defer.resolve();
           }
