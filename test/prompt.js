@@ -30,6 +30,7 @@ describe('Test prompt validations', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
 
       app.run({}, function () {
         assert.ok(typeof app.prompt.errors !== 'undefined', 'This should fail if the app name contains a space.');

@@ -32,6 +32,7 @@ describe('Test file creation', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       done();
     });
   });

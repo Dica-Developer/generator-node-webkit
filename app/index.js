@@ -27,10 +27,15 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
   this.nodeWebkitVersion = 'v0.9.2';
   this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
   this.github = false;
-  console.log(this.yeoman);
 };
 
 util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
+
+NodeWebkitGenerator.prototype.welcome = function welcome() {
+  if (!this.options['skip-welcome-message']) {
+    console.log(this.yeoman);
+  }
+};
 
 NodeWebkitGenerator.prototype.askForAppName = function askForAppName() {
   var done = this.async();

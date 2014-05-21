@@ -33,6 +33,7 @@ describe('Test github prompt', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       app.run({}, function () {
         assert.ok(typeof app.prompt.errors === 'undefined', 'This should fail if the app name contains a space.');
         assert.ok(app.github, 'This should fail if app.github is set to false.');
@@ -63,6 +64,7 @@ describe('Test github prompt', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       app.run({}, function () {
         assert.ok(typeof app.prompt.errors === 'undefined', 'This should fail if the app name contains a space.');
         assert.strictEqual(app.github, false, 'This should fail if app.github is set to false.');
@@ -93,6 +95,7 @@ describe('Test github prompt', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       app.run({}, function () {
         assert.ok(typeof app.prompt.errors === 'undefined', 'This should fail if the app name contains a space.');
         assert.strictEqual(app.github, false, 'This should fail if app.github is set to true.');
@@ -123,6 +126,7 @@ describe('Test github prompt', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       app.run({}, function () {
         var packageJson = fs.readJsonFileSync('package.json');
         assert.equal(packageJson.author.name, 'Jörg Weber', 'Should fail if author name is not "Jörg Weber"');
@@ -153,6 +157,7 @@ describe('Test github prompt', function () {
         'platforms': ['Linux64']
       });
       app.options['skip-install'] = true;
+      app.options['skip-welcome-message'] = true;
       app.run({}, function () {
         var packageJson = fs.readJsonFileSync('package.json');
         assert.equal(packageJson.author, void 0, 'Should fail if author name is not "undefined"');
