@@ -13,7 +13,6 @@ var DecompressZip = require('decompress-zip');
 var tar = require('tar-fs');
 var zlib = require('zlib');
 
-/*jshint camelcase: false*/
 var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
 
