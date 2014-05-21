@@ -44,90 +44,129 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
   this.nodeWebkitVersion = 'v0.9.2';
   this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  console.log(this.yeoman);
 };
 
 util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
 
-NodeWebkitGenerator.prototype.askFor = function askFor() {
+NodeWebkitGenerator.prototype.askForAppName = function askForAppName() {
   var done = this.async();
-  var appName = suggestAppNameFromPath(this._);
+  var basePath = path.basename(process.env.PWD);
+  var appName = this._.camelize(basePath);
 
-  // have Yeoman greet the user.
-  console.log(this.yeoman);
-
-  var prompts = [{
-    name: 'appName',
-    message: 'What do you want to call your app? Allowed characters ^[a-zA-Z0-9]+$',
-    default: appName,
-    validate: function (answer) {
-      if (!/^[a-zA-Z0-9]+$/.test(answer)) {
-        return 'The application name should only consist of the following characters a-z, A-Z and 0-9.';
+  var prompts = [
+    {
+      name: 'appName',
+      message: 'What do you want to call your app? Allowed characters ^[a-zA-Z0-9]+$',
+      default: appName,
+      validate: function (answer) {
+        if (!/^[a-zA-Z0-9]+$/.test(answer)) {
+          return 'The application name should only consist of the following characters a-z, A-Z and 0-9.';
+        }
+        return true;
       }
-      return true;
     }
-  }, {
-    name: 'appDescription',
-    message: 'A little description for your app?'
-  }, {
-    name: 'githubUser',
-    message: 'Would you mind telling me your username on GitHub?',
-    default: 'someuser'
-  }, {
-    type: 'confirm',
-    name: 'downloadNodeWebkit',
-    message: 'Do you want to download latest node-webkit?',
-    default: true
-  }, {
-    type: 'checkbox',
-    name: 'platforms',
-    message: 'Which platform do you wanna support?',
-    choices: [{
-      name: 'MacOS',
-      checked: true
-    }, {
-      name: 'Linux 64',
-      checked: true
-    }, {
-      name: 'Windows',
-      checked: true
-    }],
-    when: function (answers) {
-      return answers.downloadNodeWebkit;
-    },
-    validate: function (answer) {
-      if (answer.length < 1) {
-        return 'You must choose at least one platform.';
-      }
-      return true;
-    }
-  }];
+  ];
 
   this.prompt(prompts, function (props) {
-    var _this = this;
     this.appName = props.appName;
+    done();
+  }.bind(this));
+
+};
+
+NodeWebkitGenerator.prototype.askForDescription = function askForDescription() {
+  var done = this.async();
+  var prompts = [
+    {
+      name: 'appDescription',
+      message: 'A little description for your app?'
+    }
+  ];
+
+  this.prompt(prompts, function (props) {
     this.appDescription = props.appDescription;
-    this.platforms = props.platforms;
+    done();
+  }.bind(this));
+
+};
+
+NodeWebkitGenerator.prototype.askForGithubName = function askForGithubName() {
+  var done = this.async();
+  var prompts = [
+    {
+      name: 'githubUser',
+      message: 'Would you mind telling me your username on GitHub?',
+      default: 'someuser'
+    }
+  ];
+
+  this.prompt(prompts, function (props) {
     this.githubUser = props.githubUser;
+    done();
+  }.bind(this));
+};
+
+NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNodeWebkit() {
+  var done = this.async();
+  var prompts = [
+    {
+      type: 'confirm',
+      name: 'downloadNodeWebkit',
+      message: 'Do you want to download latest node-webkit?',
+      default: true
+    },
+    {
+      type: 'checkbox',
+      name: 'platforms',
+      message: 'Which platform do you wanna support?',
+      choices: [
+        {
+          name: 'MacOS',
+          checked: true
+        },
+        {
+          name: 'Linux 64',
+          checked: true
+        },
+        {
+          name: 'Windows',
+          checked: true
+        }
+      ],
+      when: function (answers) {
+        return answers.downloadNodeWebkit;
+      },
+      validate: function (answer) {
+        if (answer.length < 1) {
+          return 'You must choose at least one platform.';
+        }
+        return true;
+      }
+    }
+  ];
+
+  this.prompt(prompts, function (props) {
+    this.platforms = props.platforms;
     this.downloadNodeWebkit = props.downloadNodeWebkit;
     this.MacOS = false;
     this.Linux64 = false;
     this.Windows = false;
     this.github = false;
-
     if (props.downloadNodeWebkit) {
       props.platforms.forEach(function (platform) {
         switch (platform) {
         case 'MacOS':
-          _this.MacOS = true;
+          this.MacOS = true;
           break;
         case 'Linux 64':
-          _this.Linux64 = true;
+          this.Linux64 = true;
           break;
         case 'Windows':
-          _this.Windows = true;
+          this.Windows = true;
           break;
         }
-      });
+      }.bind(this));
     }
     done();
   }.bind(this));
