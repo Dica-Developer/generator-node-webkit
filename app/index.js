@@ -133,7 +133,7 @@ NodeWebkitGenerator.prototype.askFor = function askFor() {
   }.bind(this));
 };
 
-NodeWebkitGenerator.prototype.userInfo = function userInfo() {
+NodeWebkitGenerator.prototype.getGithubUserInfo = function getGithubUserInfo() {
   var done = this.async();
   var _this = this;
   var responseClbk = function (err, responseText) {
@@ -161,7 +161,7 @@ NodeWebkitGenerator.prototype.userInfo = function userInfo() {
   }
 };
 
-NodeWebkitGenerator.prototype.app = function app() {
+NodeWebkitGenerator.prototype.createFolder = function createFolder() {
   this.mkdir('app');
   this.mkdir('app/img');
   this.mkdir('resources/node-webkit');
