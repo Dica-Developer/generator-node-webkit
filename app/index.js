@@ -14,24 +14,6 @@ var tar = require('tar-fs');
 var zlib = require('zlib');
 
 /*jshint camelcase: false*/
-var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
-var githubOptions = {
-  version: '3.0.0'
-};
-
-if (proxy) {
-  githubOptions.proxy = {};
-  githubOptions.proxy.host = url.parse(proxy).hostname;
-  githubOptions.proxy.port = url.parse(proxy).port;
-}
-
-var github = new GitHubApi(githubOptions);
-
-var suggestAppNameFromPath = function (_) {
-  var basePath = path.basename(process.env.PWD);
-  return _.slugify(basePath);
-};
-
 var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
 
@@ -44,6 +26,7 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
   this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
   this.nodeWebkitVersion = 'v0.9.2';
   this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  this.github = false;
   console.log(this.yeoman);
 };
 
@@ -152,7 +135,6 @@ NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNo
     this.MacOS = false;
     this.Linux64 = false;
     this.Windows = false;
-    this.github = false;
     if (props.downloadNodeWebkit) {
       props.platforms.forEach(function (platform) {
         switch (platform) {
@@ -191,6 +173,18 @@ NodeWebkitGenerator.prototype.getGithubUserInfo = function getGithubUserInfo() {
   };
 
   if (this.githubUser !== 'someuser') {
+    var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
+    var githubOptions = {
+      version: '3.0.0'
+    };
+
+    if (proxy) {
+      githubOptions.proxy = {};
+      githubOptions.proxy.host = url.parse(proxy).hostname;
+      githubOptions.proxy.port = url.parse(proxy).port;
+    }
+
+    var github = new GitHubApi(githubOptions);
     this.log.info('Get GitHub informations');
     github.user.getFrom({
       user: this.githubUser
