@@ -112,15 +112,15 @@ NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNo
       choices: [
         {
           name: 'MacOS',
-          checked: true
+          checked: 'darwin' === process.platform
         },
         {
           name: 'Linux 64',
-          checked: true
+          checked: 'linux' === process.platform
         },
         {
           name: 'Windows',
-          checked: true
+          checked: 'win32' === process.platform
         }
       ],
       when: function (answers) {
