@@ -4,7 +4,8 @@ module.exports = function (grunt) {
   'use strict';
 
   // load all grunt tasks
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  require('time-grunt')(grunt);
+  require('load-grunt-tasks')(grunt);
 
   // configurable paths
   var config = {
