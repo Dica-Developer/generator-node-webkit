@@ -27,11 +27,11 @@
     "when": "~3.2.1",
     "github": "~0.1.16",
     "tar-fs": "~0.3.2",
-    "mocha": "~1.19.0",
+    "mocha": "~1.20.0",
     "decompress-zip": "0.0.7"
   },
   "devDependencies": {
-    "mocha": "~1.19.0",
+    "mocha": "~1.20.0",
     "temp": "^0.7.0",
     "request": "^2.36.0"
   },
