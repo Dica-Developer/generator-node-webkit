@@ -5,7 +5,6 @@ var path = require('path');
 var temp = require('temp');
 var helpers = require('yeoman-generator').test;
 var expect = require('chai').expect;
-var fs = require('fs-extra');
 
 describe('Test file creation', function () {
   var app;
