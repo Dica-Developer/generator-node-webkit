@@ -65,6 +65,33 @@ describe('Test file creation', function () {
       done();
     });
   });
+
+  it('Creates app files', function (done) {
+    var expected = [
+      'app/css/main.css',
+      'app/js/index.js',
+      'app/package.json',
+      'app/views/index.html'
+    ];
+
+    app.run({}, function () {
+      expect(app.prompt.errors).to.be.an('undefined');
+      helpers.assertFile(expected);
+      done();
+    });
+  });
+
+  it('Creates resource files', function (done) {
+    var expected = [
+      'resources/mac/dmgStyler.applescript',
+      'resources/mac/package.sh',
+      'resources/mac/background.png',
+      'resources/mac/Info.plist.tmp',
+      'resources/mac/Info.plist'
+    ];
+
+    app.run({}, function () {
+      expect(app.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });
