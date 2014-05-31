@@ -4,7 +4,8 @@
 var path = require('path');
 var temp = require('temp');
 var helpers = require('yeoman-generator').test;
-var assert = require('yeoman-generator').assert;
+var expect = require('chai').expect;
+var fs = require('fs-extra');
 
 describe('Test file creation', function () {
   var app;
@@ -44,7 +45,7 @@ describe('Test file creation', function () {
     ];
 
     app.run({}, function () {
-      assert.ok(typeof app.prompt.errors === 'undefined', 'Validation errors in prompt values');
+      expect(app.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });
@@ -59,7 +60,11 @@ describe('Test file creation', function () {
     ];
 
     app.run({}, function () {
-      assert.ok(typeof app.prompt.errors === 'undefined', 'Validation errors in prompt values');
+      expect(app.prompt.errors).to.be.an('undefined');
+      helpers.assertFile(expected);
+      done();
+    });
+  });
       helpers.assertFile(expected);
       done();
     });
