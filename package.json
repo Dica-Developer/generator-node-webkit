@@ -24,15 +24,15 @@
   "dependencies": {
     "yeoman-generator": "^0.17.0",
     "fs-extra": "~0.9.1",
-    "when": "~3.2.1",
-    "github": "~0.1.16",
-    "tar-fs": "~0.3.2",
-    "mocha": "~1.20.0",
-    "decompress-zip": "0.0.7"
+    "when": "~3.2.3",
+    "github": "~0.2.0",
+    "tar-fs": "~0.3.3",
+    "mocha": "~1.20.1",
+    "decompress-zip": "0.0.8"
   },
   "devDependencies": {
-    "mocha": "~1.20.0",
-    "temp": "^0.7.0",
+    "mocha": "~1.20.1",
+    "temp": "^0.8.0",
     "request": "^2.36.0",
     "chai": "^1.9.1"
   },
