@@ -156,7 +156,7 @@ module.exports = function (grunt) {
     var concat = require('concat-files');
     concat([
       'tmp/nw.exe',
-      'tmp/app.nw',
+      'tmp/app.nw'
     ], 'tmp/<%= appName %>.exe', function () {
       var fs = require('fs');
       fs.unlink('tmp/app.nw', function (error, stdout, stderr) {
