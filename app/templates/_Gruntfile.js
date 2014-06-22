@@ -131,11 +131,11 @@ module.exports = function (grunt) {
     fs.chmodSync('dist/<%= appName %>.app/Contents/MacOS/node-webkit', '555');
   });
 
-  grunt.registerTask('createLinuxApp', 'Create linux distribution.', function () {
+  grunt.registerTask('createLinuxApp', 'Create linux distribution.', function (version) {
     var done = this.async();
     var childProcess = require('child_process');
     var exec = childProcess.exec;
-    exec('mkdir -p ./dist; cp resources/node-webkit/Linux64/nw.pak dist/ && cp resources/node-webkit/Linux64/nw dist/node-webkit', function (error, stdout, stderr) {
+    exec('mkdir -p ./dist; cp resources/node-webkit/'+ version +'/nw.pak dist/ && cp resources/node-webkit/'+ version +'/nw dist/node-webkit', function (error, stdout, stderr) {
       var result = true;
       if (stdout) {
         grunt.log.write(stdout);
@@ -220,7 +220,14 @@ module.exports = function (grunt) {
     'jshint',
     'clean:dist',
     'copy:appLinux',
-    'createLinuxApp'
+    'createLinuxApp:Linux64'
+  ]);
+
+  grunt.registerTask('dist-linux32', [
+    'jshint',
+    'clean:dist',
+    'copy:appLinux',
+    'createLinuxApp:Linux32'
   ]);
 
   grunt.registerTask('dist-win', [

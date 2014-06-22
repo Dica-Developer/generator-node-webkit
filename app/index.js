@@ -119,6 +119,10 @@ NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNo
           checked: 'linux' === process.platform
         },
         {
+          name: 'Linux 32',
+          checked: false
+        },
+        {
           name: 'Windows',
           checked: 'win32' === process.platform
         }
@@ -149,6 +153,9 @@ NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNo
           break;
         case 'Linux 64':
           this.Linux64 = true;
+        break;
+        case 'Linux 32':
+          this.Linux32 = true;
           break;
         case 'Windows':
           this.Windows = true;
@@ -304,6 +311,9 @@ NodeWebkitGenerator.prototype._getNodeWebkit = function _getNodeWebkit() {
   if (this.Linux64) {
     promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz', 'Linux64'));
   }
+  if (this.Linux32) {
+    promises.push(this._requestNodeWebkit('linux-ia32', '.tar.gz', 'Linux32'));
+  }
   if (this.Windows) {
     promises.push(this._requestNodeWebkit('win-ia32', '.zip', 'Windows'));
   }
@@ -365,6 +375,9 @@ NodeWebkitGenerator.prototype._unzipNodeWebkit = function _unzipNodeWebkit() {
   if (this.Linux64) {
     promises.push(this._extract('Linux64', '.tar.gz'));
   }
+  if (this.Linux32) {
+    promises.push(this._extract('Linux32', '.tar.gz'));
+  }
   if (this.Windows) {
     promises.push(this._extract('Windows', '.zip'));
   }
@@ -401,11 +414,13 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
     var dst = 'resources/node-webkit/' + platform;
     fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function (error) {
       if (!error) {
-        fs.copy('resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + '-linux-x64', 'resources/node-webkit/' + platform, function (error) {
+        var platformSuffix = platform === 'Linux64' ? '-linux-x64' : '-linux-ia32';
+        var copyPath = 'resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + platformSuffix;
+        fs.copy(copyPath, 'resources/node-webkit/' + platform, function (error) {
           if (error) {
             defer.reject(error);
           } else {
-            fs.remove('resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + '-linux-x64');
+            fs.remove(copyPath);
             _this.log.ok('%s directory successfully copied.', platform);
             defer.resolve();
           }
