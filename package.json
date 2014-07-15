@@ -1,6 +1,6 @@
 {
   "name": "generator-node-webkit",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "A generator for node-webkit",
   "keywords": [
     "yeoman-generator",
