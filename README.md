@@ -21,7 +21,7 @@ $ yo node-webkit
 ```
 
 
-For further inormations, please visit our [Wiki](https://github.com/Dica-Developer/generator-node-webkit/wiki "Wiki")
+For further informations, please visit our [Wiki](https://github.com/Dica-Developer/generator-node-webkit/wiki "Wiki")
 
 ## We would like to thank
 
@@ -31,7 +31,7 @@ For further inormations, please visit our [Wiki](https://github.com/Dica-Develop
 
 [Zack Lalanne](https://github.com/zlalanne "zlalanne")
 
-for helping to make it easy to develope cross platform apps.
+for helping to make it easy to develop cross platform apps.
 
 
 ## License
