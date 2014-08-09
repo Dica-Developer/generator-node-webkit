@@ -90,23 +90,6 @@ NodeWebkitGenerator.prototype.askForGithubName = function askForGithubName() {
   }.bind(this));
 };
 
-NodeWebkitGenerator.prototype.askForInstallNodeWebkit = function askForInstallNodeWebkit() {
-  var done = this.async();
-  var prompts = [
-    {
-      type: 'confirm',
-      name: 'installNodewebkit',
-      message: 'Do you want to download node-webkit?',
-      default: true
-    }
-  ];
-  this.prompt(prompts, function (props) {
-    this.installNodewebkit = props.installNodewebkit;
-    done();
-  }.bind(this));
-
-};
-
 NodeWebkitGenerator.prototype.askForInstallExamples = function askForInstallExamples() {
   var done = this.async();
   var prompts = [
@@ -193,12 +176,10 @@ NodeWebkitGenerator.prototype.getExampleList = function getExampleList() {
 };
 
 NodeWebkitGenerator.prototype.nodeWebkitSubgenerator = function createFolder() {
-  if (this.installNodewebkit) {
-    var done = this.async();
-    this.invoke("node-webkit:download", {}, function(){
-      done();
-    });
-  }
+  var done = this.async();
+  this.invoke("node-webkit:download", {}, function () {
+    done();
+  });
 };
 
 NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles() {

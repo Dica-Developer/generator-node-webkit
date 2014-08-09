@@ -15,6 +15,22 @@ module.exports = yeoman.generators.Base.extend({
     this.nodeWebkitVersion = 'v0.9.2';
     this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
   },
+  askForInstallNodeWebkit: function askForInstallNodeWebkit() {
+    var done = this.async();
+    var prompts = [
+      {
+        type: 'confirm',
+        name: 'installNodewebkit',
+        message: 'Do you want to download node-webkit?',
+        default: true
+      }
+    ];
+    this.prompt(prompts, function (props) {
+      this.installNodewebkit = props.installNodewebkit;
+      done();
+    }.bind(this));
+
+  },
   askForVersion: function askForAppName() {
     var done = this.async();
     var prompts = [
