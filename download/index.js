@@ -13,7 +13,8 @@ var zlib = require('zlib');
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
-    this.nodeWebkitVersion = 'v0.10.0';
+    this.defaultNodeWebkitVersion = 'v0.9.2';
+    this.nodeWebkitVersion = 'v0.9.2';
     this.downloadNodeWebkit = true;
   },
   _getDownloadUrl: function () {
@@ -46,7 +47,7 @@ module.exports = yeoman.generators.Base.extend({
         type: 'input',
         name: 'nodeWebkitVersion',
         message: 'Please specify which version of node-webkit you want download',
-        default: 'v0.10.0',
+        default: _this.defaultNodeWebkitVersion,
         when: function () {
           return _this.downloadNodeWebkit;
         },
