@@ -2,39 +2,25 @@
 'use strict';
 
 var path = require('path');
-var temp = require('temp');
 var helpers = require('yeoman-generator').test;
 var expect = require('chai').expect;
 
 describe('Test file creation', function () {
-  var app;
+  var app,
+    deps = [
+      [helpers.createDummyGenerator(), 'node-webkit:download']
+    ];
 
-  after(function () {
-    temp.cleanup();
-  });
-
-  beforeEach(function (done) {
-    var workspace = temp.mkdirSync();
-    helpers.testDirectory(workspace, function (err) {
-      if (err) {
-        return done(err);
-      }
-
-      app = helpers.createGenerator('node-webkit:app', [
-        path.resolve(__dirname, '../app')
-      ]);
-
-      helpers.mockPrompt(app, {
+  beforeEach(function () {
+    app = helpers.run(path.join(__dirname, '../app'))
+      .inDir(path.join(__dirname, './tmp'))
+      .withOptions({ 'skip-install': true, 'skip-welcome-message': true })
+      .withGenerators(deps)
+      .withPrompts({
         'appName': 'TestApp',
         'appDescription': 'Test App Description',
-        'githubUser': 'someuser',
-        downloadNodeWebkit: false,
-        'platforms': ['Linux64']
+        'githubUser': 'someuser'
       });
-      app.options['skip-install'] = true;
-      app.options['skip-welcome-message'] = true;
-      done();
-    });
   });
 
   it('Creates dot files', function (done) {
@@ -44,8 +30,8 @@ describe('Test file creation', function () {
       '.gitignore'
     ];
 
-    app.run({}, function () {
-      expect(app.prompt.errors).to.be.an('undefined');
+    app.on('end', function () {
+      expect(app.generator.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });
@@ -59,8 +45,8 @@ describe('Test file creation', function () {
       'bower.json'
     ];
 
-    app.run({}, function () {
-      expect(app.prompt.errors).to.be.an('undefined');
+    app.on('end', function () {
+      expect(app.generator.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });
@@ -74,8 +60,8 @@ describe('Test file creation', function () {
       'app/views/index.html'
     ];
 
-    app.run({}, function () {
-      expect(app.prompt.errors).to.be.an('undefined');
+    app.on('end', function () {
+      expect(app.generator.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });
@@ -90,8 +76,8 @@ describe('Test file creation', function () {
       'resources/mac/Info.plist'
     ];
 
-    app.run({}, function () {
-      expect(app.prompt.errors).to.be.an('undefined');
+    app.on('end', function () {
+      expect(app.generator.prompt.errors).to.be.an('undefined');
       helpers.assertFile(expected);
       done();
     });

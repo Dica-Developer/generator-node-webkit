@@ -4,6 +4,7 @@
 var yeoman = require('yeoman-generator');
 var when = require('when');
 var http = require('http');
+var request = require('request');
 var fs = require('fs-extra');
 var DecompressZip = require('decompress-zip');
 var tar = require('tar-fs');
@@ -12,109 +13,156 @@ var zlib = require('zlib');
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
+    this.defaultNodeWebkitVersion = 'v0.9.2';
     this.nodeWebkitVersion = 'v0.9.2';
-    this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+    this.downloadNodeWebkit = true;
+  },
+  _getDownloadUrl: function () {
+    return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  },
+  _getDownloadTmpUrl: function (version) {
+    return 'http://dl.node-webkit.org/' + version + '/node-webkit-' + version + '-linux-x64.tar.gz';
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
     var prompts = [
       {
         type: 'confirm',
-        name: 'installNodewebkit',
+        name: 'downloadNodeWebkit',
         message: 'Do you want to download node-webkit?',
         default: true
       }
     ];
     this.prompt(prompts, function (props) {
-      this.installNodewebkit = props.installNodewebkit;
+      this.downloadNodeWebkit = props.downloadNodeWebkit;
       done();
     }.bind(this));
 
   },
-  askForVersion: function askForAppName() {
-    var done = this.async();
+  askForVersion: function askForInstallLatesVersion() {
+    var done = this.async(),
+      _this = this;
     var prompts = [
       {
-        type: 'confirm',
-        name: 'downloadNodeWebkit',
-        message: 'Do you want to download latest node-webkit?',
-        default: true
-      },
-      {
-        type: 'checkbox',
-        name: 'platforms',
-        message: 'Which platform do you wanna support?',
-        choices: [
-          {
-            name: 'MacOS',
-            checked: 'darwin' === process.platform
-          },
-          {
-            name: 'Linux 64',
-            checked: 'linux' === process.platform
-          },
-          {
-            name: 'Linux 32',
-            checked: false
-          },
-          {
-            name: 'Windows',
-            checked: 'win32' === process.platform
-          }
-        ],
-        when: function (answers) {
-          return answers.downloadNodeWebkit;
+        type: 'input',
+        name: 'nodeWebkitVersion',
+        message: 'Please specify which version of node-webkit you want download',
+        default: _this.defaultNodeWebkitVersion,
+        when: function () {
+          return _this.downloadNodeWebkit;
         },
         validate: function (answer) {
-          if (answer.length < 1) {
-            return 'You must choose at least one platform.';
-          }
-          return true;
+          var validateDone = this.async(),
+            url = _this._getDownloadTmpUrl(answer);
+
+          _this.log.info('Check if version "' + answer + '" is available for download.');
+          request.head(url, function (error, response) {
+            if (error) {
+              _this.log.conflict(error);
+            }
+            if (response.statusCode === 200) {
+              _this.log.ok('Use version "' + answer + '".');
+              validateDone(true);
+            } else {
+              validateDone('No download url found for version "' + answer + '"!');
+            }
+          });
         }
       }
     ];
 
     this.prompt(prompts, function (props) {
-      this.platforms = props.platforms;
-      this.downloadNodeWebkit = props.downloadNodeWebkit;
-      this.MacOS = false;
-      this.Linux64 = false;
-      this.Windows = false;
-      if (props.downloadNodeWebkit) {
-        props.platforms.forEach(function (platform) {
-          switch (platform) {
-          case 'MacOS':
-            this.MacOS = true;
-            break;
-          case 'Linux 64':
-            this.Linux64 = true;
-            break;
-          case 'Linux 32':
-            this.Linux32 = true;
-            break;
-          case 'Windows':
-            this.Windows = true;
-            break;
-          }
-        }.bind(this));
-      }
+      this.nodeWebkitVersion = props.nodeWebkitVersion;
       done();
     }.bind(this));
   },
+  askForPlatform: function askForPlatform() {
+    var done = this.async(),
+      _this = this,
+      prompts = [
+        {
+          type: 'checkbox',
+          name: 'platforms',
+          message: 'Which platform do you wanna support?',
+          choices: [
+            {
+              name: 'MacOS',
+              checked: 'darwin' === process.platform
+            },
+            {
+              name: 'Linux 64',
+              checked: 'linux' === process.platform
+            },
+            {
+              name: 'Linux 32',
+              checked: false
+            },
+            {
+              name: 'Windows',
+              checked: 'win32' === process.platform
+            }
+          ],
+          when: function () {
+            return _this.downloadNodeWebkit;
+          },
+          validate: function (answer) {
+            if (answer.length < 1) {
+              return 'You must choose at least one platform.';
+            }
+            return true;
+          }
+        }
+      ];
+
+
+    this.prompt(prompts, function (props) {
+      _this.platforms = props.platforms;
+      _this.MacOS = false;
+      _this.Linux64 = false;
+      _this.Windows = false;
+      if(_this.downloadNodeWebkit){
+        _this.platforms.forEach(function (platform) {
+          switch (platform) {
+          case 'MacOS':
+            _this.MacOS = true;
+            break;
+          case 'Linux 64':
+            _this.Linux64 = true;
+            break;
+          case 'Linux 32':
+            _this.Linux32 = true;
+            break;
+          case 'Windows':
+            _this.Windows = true;
+            break;
+          }
+        });
+      }
+      done();
+    });
+  },
   createFolder: function createFolder() {
-    this.mkdir('app');
-    this.mkdir('app/img');
+    this.log.info('Creating folder structure for node-webkit source.');
     this.mkdir('resources/node-webkit');
+    this.log.ok('Created: "resources/node-webkit"');
     if (this.MacOS) {
       this.mkdir('resources/node-webkit/MacOS');
+      this.log.ok('Created: "resources/node-webkit/MacOS"');
     }
     if (this.Linux64) {
       this.mkdir('resources/node-webkit/Linux64');
+      this.log.ok('Created: "resources/node-webkit/Linux64"');
+    }
+    if (this.Linux32) {
+      this.mkdir('resources/node-webkit/Linux32');
+      this.log.ok('Created: "resources/node-webkit/Linux32"');
     }
     if (this.Windows) {
       this.mkdir('resources/node-webkit/Windows');
+      this.log.ok('Created: "resources/node-webkit/Windows"');
     }
     this.mkdir('tmp');
+    this.log.ok('Created: "tmp"');
   },
   getNodeWebkit: function getNodeWebkit() {
     var done = this.async();
@@ -128,25 +176,8 @@ module.exports = yeoman.generators.Base.extend({
     if (this.downloadNodeWebkit) {
       when.all(this._getNodeWebkit()).then(successClbk, failureClbk);
     } else {
-      when.all(this._createFolder()).then(successClbk, failureClbk);
+      successClbk();
     }
-  },
-  _createFolder: function _createFolder() {
-    var promises = [];
-    var basePath = 'resources/node-webkit/';
-    var platforms = ['MacOS', 'Linux64', 'Windows'];
-    platforms.forEach(function (platform) {
-      var defer = when.defer();
-      promises.push(defer.promise);
-      fs.mkdirs(basePath + '/' + platform, function (err) {
-        if (err) {
-          defer.reject(err);
-        } else {
-          defer.resolve();
-        }
-      });
-    });
-    return promises;
   },
   _getNodeWebkit: function _getNodeWebkit() {
     var promises = [];
@@ -165,14 +196,15 @@ module.exports = yeoman.generators.Base.extend({
     return promises;
   },
   _requestNodeWebkit: function _requestNodeWebkit(versionString, extension, platform) {
-    var defer = when.defer();
-    var _this = this;
+    var defer = when.defer(),
+      _this = this;
+
     if (!fs.existsSync('tmp/' + platform + extension)) {
       if (fs.existsSync('tmp/' + platform + extension + '.part')) {
         fs.unlinkSync('tmp/' + platform + extension + '.part');
       }
       this.log.info('Downloading node-webkit for ' + platform);
-      http.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
+      http.get(this._getDownloadUrl() + versionString + extension, function (res) {
         if (200 === res.statusCode) {
           res.on('data', function (chunk) {
             fs.appendFileSync('tmp/' + platform + extension + '.part', chunk);
@@ -206,7 +238,11 @@ module.exports = yeoman.generators.Base.extend({
     var failureClbk = function (error) {
       throw error;
     };
-    when.all(this._unzipNodeWebkit()).then(successClbk, failureClbk);
+    if (this.downloadNodeWebkit) {
+      when.all(this._unzipNodeWebkit()).then(successClbk, failureClbk);
+    } else {
+      done();
+    }
   },
   _unzipNodeWebkit: function _unzipNodeWebkit() {
     var promises = [];
