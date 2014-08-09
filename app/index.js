@@ -436,6 +436,7 @@ NodeWebkitGenerator.prototype._extract = function _extract(platform, extension) 
 NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles() {
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
+  this.copy('gitignore', '.gitignore');
   this.copy('_bower.json', 'bower.json');
   this.copy('mac/dmgStyler.applescript', 'resources/mac/dmgStyler.applescript');
   this.copy('mac/package.sh', 'resources/mac/package.sh');
