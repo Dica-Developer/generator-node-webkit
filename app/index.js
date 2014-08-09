@@ -164,6 +164,34 @@ NodeWebkitGenerator.prototype.getGithubUserInfo = function getGithubUserInfo() {
   }
 };
 
+NodeWebkitGenerator.prototype.getExampleList = function getExampleList() {
+  var done = this.async();
+  if (this.installExamples) {
+    var prompts = [
+      {
+        type: 'list',
+        name: 'example',
+        message: 'Which example do you want to install?',
+        choices: []
+      }
+    ];
+
+    this.examplesAPI = new Examples(this);
+    this.log.info('Getting list of available examples.');
+    this.examplesAPI.getExampleList()
+      .then(function (list) {
+        prompts[0].choices = list;
+
+        this.prompt(prompts, function (props) {
+          this.example = props.example;
+          done();
+        }.bind(this));
+      }.bind(this));
+  } else {
+    done();
+  }
+};
+
 NodeWebkitGenerator.prototype.nodeWebkitSubgenerator = function createFolder() {
   if (this.installNodewebkit) {
     var done = this.async();
