@@ -108,17 +108,27 @@ module.exports = yeoman.generators.Base.extend({
     }.bind(this));
   },
   createFolder: function createFolder() {
+    this.log.info('Creating folder structure for node-webkit source.');
     this.mkdir('resources/node-webkit');
+    this.log.ok('Created: "resources/node-webkit"');
     if (this.MacOS) {
       this.mkdir('resources/node-webkit/MacOS');
+      this.log.ok('Created: "resources/node-webkit/MacOS"');
     }
     if (this.Linux64) {
       this.mkdir('resources/node-webkit/Linux64');
+      this.log.ok('Created: "resources/node-webkit/Linux64"');
+    }
+    if (this.Linux32) {
+      this.mkdir('resources/node-webkit/Linux32');
+      this.log.ok('Created: "resources/node-webkit/Linux32"');
     }
     if (this.Windows) {
       this.mkdir('resources/node-webkit/Windows');
+      this.log.ok('Created: "resources/node-webkit/Windows"');
     }
     this.mkdir('tmp');
+    this.log.ok('Created: "tmp"');
   },
   getNodeWebkit: function getNodeWebkit() {
     var done = this.async();
