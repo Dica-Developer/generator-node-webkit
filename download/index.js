@@ -13,7 +13,9 @@ module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
     this.nodeWebkitVersion = 'v0.9.2';
-    this.nodeWebkitBaseUrl = 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  },
+  _getDownloadUrl: function(){
+    return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
@@ -172,7 +174,7 @@ module.exports = yeoman.generators.Base.extend({
         fs.unlinkSync('tmp/' + platform + extension + '.part');
       }
       this.log.info('Downloading node-webkit for ' + platform);
-      http.get(this.nodeWebkitBaseUrl + versionString + extension, function (res) {
+      http.get(this._getDownloadUrl() + versionString + extension, function (res) {
         if (200 === res.statusCode) {
           res.on('data', function (chunk) {
             fs.appendFileSync('tmp/' + platform + extension + '.part', chunk);
