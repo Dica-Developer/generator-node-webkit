@@ -204,7 +204,11 @@ module.exports = yeoman.generators.Base.extend({
     var failureClbk = function (error) {
       throw error;
     };
-    when.all(this._unzipNodeWebkit()).then(successClbk, failureClbk);
+    if (this.downloadNodeWebkit) {
+      when.all(this._unzipNodeWebkit()).then(successClbk, failureClbk);
+    } else {
+      done();
+    }
   },
   _unzipNodeWebkit: function _unzipNodeWebkit() {
     var promises = [];
