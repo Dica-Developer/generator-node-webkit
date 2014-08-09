@@ -142,25 +142,8 @@ module.exports = yeoman.generators.Base.extend({
     if (this.downloadNodeWebkit) {
       when.all(this._getNodeWebkit()).then(successClbk, failureClbk);
     } else {
-      when.all(this._createFolder()).then(successClbk, failureClbk);
+      successClbk();
     }
-  },
-  _createFolder: function _createFolder() {
-    var promises = [];
-    var basePath = 'resources/node-webkit/';
-    var platforms = ['MacOS', 'Linux64', 'Windows'];
-    platforms.forEach(function (platform) {
-      var defer = when.defer();
-      promises.push(defer.promise);
-      fs.mkdirs(basePath + '/' + platform, function (err) {
-        if (err) {
-          defer.reject(err);
-        } else {
-          defer.resolve();
-        }
-      });
-    });
-    return promises;
   },
   _getNodeWebkit: function _getNodeWebkit() {
     var promises = [];
