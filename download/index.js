@@ -104,8 +104,6 @@ module.exports = yeoman.generators.Base.extend({
     }.bind(this));
   },
   createFolder: function createFolder() {
-    this.mkdir('app');
-    this.mkdir('app/img');
     this.mkdir('resources/node-webkit');
     if (this.MacOS) {
       this.mkdir('resources/node-webkit/MacOS');

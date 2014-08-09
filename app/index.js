@@ -182,6 +182,13 @@ NodeWebkitGenerator.prototype.nodeWebkitSubgenerator = function createFolder() {
   });
 };
 
+
+
+NodeWebkitGenerator.prototype.createFolder = function createFolder() {
+  this.mkdir('app');
+  this.mkdir('app/img');
+};
+
 NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles() {
   this.copy('editorconfig', '.editorconfig');
   this.copy('jshintrc', '.jshintrc');
