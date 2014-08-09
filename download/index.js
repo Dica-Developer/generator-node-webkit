@@ -4,6 +4,7 @@
 var yeoman = require('yeoman-generator');
 var when = require('when');
 var http = require('http');
+var request = require('request');
 var fs = require('fs-extra');
 var DecompressZip = require('decompress-zip');
 var tar = require('tar-fs');
@@ -37,75 +38,107 @@ module.exports = yeoman.generators.Base.extend({
     }.bind(this));
 
   },
-  askForVersion: function askForAppName() {
-    var done = this.async();
+  askForVersion: function askForInstallLatesVersion() {
+    var done = this.async(),
+      _this = this;
     var prompts = [
       {
-        type: 'confirm',
-        name: 'downloadNodeWebkit',
-        message: 'Do you want to download latest node-webkit?',
-        default: true
-      },
-      {
-        type: 'checkbox',
-        name: 'platforms',
-        message: 'Which platform do you wanna support?',
-        choices: [
-          {
-            name: 'MacOS',
-            checked: 'darwin' === process.platform
-          },
-          {
-            name: 'Linux 64',
-            checked: 'linux' === process.platform
-          },
-          {
-            name: 'Linux 32',
-            checked: false
-          },
-          {
-            name: 'Windows',
-            checked: 'win32' === process.platform
-          }
-        ],
-        when: function (answers) {
-          return answers.downloadNodeWebkit;
+        type: 'input',
+        name: 'nodeWebkitVersion',
+        message: 'Please specify which version of node-webkit you want download',
+        default: 'v0.10.0',
+        when: function () {
+          return _this.downloadNodeWebkit;
         },
         validate: function (answer) {
-          if (answer.length < 1) {
-            return 'You must choose at least one platform.';
-          }
-          return true;
+          var validateDone = this.async(),
+            url = _this._getDownloadTmpUrl(answer);
+
+          _this.log.info('Check if version "' + answer + '" is available for download.');
+          request.head(url, function (error, response) {
+            if (error) {
+              _this.log.conflict(error);
+            }
+            if (response.statusCode === 200) {
+              _this.log.ok('Use version "' + answer + '".');
+              validateDone(true);
+            } else {
+              validateDone('No download url found for version "' + answer + '"!');
+            }
+          });
         }
       }
     ];
 
     this.prompt(prompts, function (props) {
-      this.platforms = props.platforms;
-      this.downloadNodeWebkit = props.downloadNodeWebkit;
-      this.MacOS = false;
-      this.Linux64 = false;
-      this.Windows = false;
-      if (props.downloadNodeWebkit) {
-        props.platforms.forEach(function (platform) {
-          switch (platform) {
-          case 'MacOS':
-            this.MacOS = true;
-            break;
-          case 'Linux 64':
-            this.Linux64 = true;
-            break;
-          case 'Linux 32':
-            this.Linux32 = true;
-            break;
-          case 'Windows':
-            this.Windows = true;
-            break;
-          }
-        }.bind(this));
-      }
+      this.nodeWebkitVersion = props.nodeWebkitVersion;
       done();
     }.bind(this));
+  },
+  askForPlatform: function askForPlatform() {
+    var done = this.async(),
+      _this = this,
+      prompts = [
+        {
+          type: 'checkbox',
+          name: 'platforms',
+          message: 'Which platform do you wanna support?',
+          choices: [
+            {
+              name: 'MacOS',
+              checked: 'darwin' === process.platform
+            },
+            {
+              name: 'Linux 64',
+              checked: 'linux' === process.platform
+            },
+            {
+              name: 'Linux 32',
+              checked: false
+            },
+            {
+              name: 'Windows',
+              checked: 'win32' === process.platform
+            }
+          ],
+          when: function () {
+            return _this.downloadNodeWebkit;
+          },
+          validate: function (answer) {
+            if (answer.length < 1) {
+              return 'You must choose at least one platform.';
+            }
+            return true;
+          }
+        }
+      ];
+
+
+    this.prompt(prompts, function (props) {
+      _this.platforms = props.platforms;
+      _this.MacOS = false;
+      _this.Linux64 = false;
+      _this.Windows = false;
+      if(_this.downloadNodeWebkit){
+        _this.platforms.forEach(function (platform) {
+          switch (platform) {
+          case 'MacOS':
+            _this.MacOS = true;
+            break;
+          case 'Linux 64':
+            _this.Linux64 = true;
+            break;
+          case 'Linux 32':
+            _this.Linux32 = true;
+            break;
+          case 'Windows':
+            _this.Windows = true;
+            break;
+          }
+        });
+      }
+      done();
+    });
   },
   createFolder: function createFolder() {
     this.log.info('Creating folder structure for node-webkit source.');
