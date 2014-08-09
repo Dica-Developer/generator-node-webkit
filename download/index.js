@@ -13,6 +13,7 @@ module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
     this.nodeWebkitVersion = 'v0.10.0';
+    this.downloadNodeWebkit = true;
   },
   _getDownloadUrl: function(){
     return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
@@ -22,13 +23,13 @@ module.exports = yeoman.generators.Base.extend({
     var prompts = [
       {
         type: 'confirm',
-        name: 'installNodewebkit',
+        name: 'downloadNodeWebkit',
         message: 'Do you want to download node-webkit?',
         default: true
       }
     ];
     this.prompt(prompts, function (props) {
-      this.installNodewebkit = props.installNodewebkit;
+      this.downloadNodeWebkit = props.downloadNodeWebkit;
       done();
     }.bind(this));
 
