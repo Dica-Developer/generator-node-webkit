@@ -12,7 +12,7 @@ var zlib = require('zlib');
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
-    this.nodeWebkitVersion = 'v0.9.2';
+    this.nodeWebkitVersion = 'v0.10.0';
   },
   _getDownloadUrl: function(){
     return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
