@@ -40,7 +40,8 @@ describe('Test file creation', function () {
   it('Creates dot files', function (done) {
     var expected = [
       '.jshintrc',
-      '.editorconfig'
+      '.editorconfig',
+      '.gitignore'
     ];
 
     app.run({}, function () {
