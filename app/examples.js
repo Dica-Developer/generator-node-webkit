@@ -25,13 +25,12 @@ function Examples(yeoman) {
 
 Examples.prototype.getExamplesOverview = function () {
   var defer = when.defer();
-  github.gitdata.getTree(
-    {
+  github.gitdata.getTree({
       'user': 'zcbenz',
       'repo': 'nw-sample-apps',
       'sha': 'master'
     },
-    function(err, resp){
+    function (err, resp) {
       defer.resolve(resp);
     }
   );
@@ -42,10 +41,10 @@ Examples.prototype.getExampleList = function () {
   var _this = this;
   var defer = when.defer();
   this.getExamplesOverview()
-    .then(function(resp){
+    .then(function (resp) {
       var list = [];
-      resp.tree.forEach(function(treeEntry){
-        if('tree' === treeEntry.type){
+      resp.tree.forEach(function (treeEntry) {
+        if ('tree' === treeEntry.type) {
           list.push(treeEntry.path);
           _this.entries.push(treeEntry);
         }
@@ -55,8 +54,6 @@ Examples.prototype.getExampleList = function () {
   return defer.promise;
 };
 
-
-
 Examples.prototype.downloadAndInstallExamples = function downloadAndInstallExamples(example) {
   this.example = example;
   var defer = when.defer();
@@ -64,7 +61,7 @@ Examples.prototype.downloadAndInstallExamples = function downloadAndInstallExamp
   this.downloadExamples()
     .then(this.unzipExamples.bind(this))
     .then(this.installExamples.bind(this))
-    .then(function(){
+    .then(function () {
       defer.resolve();
     });
 
@@ -123,8 +120,8 @@ Examples.prototype.unzipExamples = function unzipExamples() {
 Examples.prototype.installExamples = function installExamples() {
   var _this = this;
   var defer = when.defer();
-  fs.copy('tmp/nw-sample-apps-master/'+ this.example, 'app', function(err){
-    if(err){
+  fs.copy('tmp/nw-sample-apps-master/' + this.example, 'app', function (err) {
+    if (err) {
       _this.yeoman.log.conflict('Error while copying example', err);
       defer.reject(err);
     }

@@ -6,10 +6,8 @@ var path = require('path');
 var yeoman = require('yeoman-generator');
 var url = require('url');
 var GitHubApi = require('github');
-var tar = require('tar-fs');
 
 var Examples = require('./examples.js');
-
 
 var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, options) {
   yeoman.generators.Base.apply(this, arguments);
@@ -37,19 +35,17 @@ NodeWebkitGenerator.prototype.askForAppName = function askForAppName() {
   var basePath = path.basename(process.env.PWD);
   var appName = this._.camelize(basePath);
 
-  var prompts = [
-    {
-      name: 'appName',
-      message: 'What do you want to call your app? Allowed characters ^[a-zA-Z0-9]+$',
-      default: appName,
-      validate: function (answer) {
-        if (!/^[a-zA-Z0-9]+$/.test(answer)) {
-          return 'The application name should only consist of the following characters a-z, A-Z and 0-9.';
-        }
-        return true;
+  var prompts = [{
+    name: 'appName',
+    message: 'What do you want to call your app? Allowed characters ^[a-zA-Z0-9]+$',
+    default: appName,
+    validate: function (answer) {
+      if (!/^[a-zA-Z0-9]+$/.test(answer)) {
+        return 'The application name should only consist of the following characters a-z, A-Z and 0-9.';
       }
+      return true;
     }
-  ];
+  }];
 
   this.prompt(prompts, function (props) {
     this.appName = props.appName;
@@ -60,12 +56,10 @@ NodeWebkitGenerator.prototype.askForAppName = function askForAppName() {
 
 NodeWebkitGenerator.prototype.askForDescription = function askForDescription() {
   var done = this.async();
-  var prompts = [
-    {
-      name: 'appDescription',
-      message: 'A little description for your app?'
-    }
-  ];
+  var prompts = [{
+    name: 'appDescription',
+    message: 'A little description for your app?'
+  }];
 
   this.prompt(prompts, function (props) {
     this.appDescription = props.appDescription;
@@ -76,13 +70,11 @@ NodeWebkitGenerator.prototype.askForDescription = function askForDescription() {
 
 NodeWebkitGenerator.prototype.askForGithubName = function askForGithubName() {
   var done = this.async();
-  var prompts = [
-    {
-      name: 'githubUser',
-      message: 'Would you mind telling me your username on GitHub?',
-      default: 'someuser'
-    }
-  ];
+  var prompts = [{
+    name: 'githubUser',
+    message: 'Would you mind telling me your username on GitHub?',
+    default: 'someuser'
+  }];
 
   this.prompt(prompts, function (props) {
     this.githubUser = props.githubUser;
@@ -92,14 +84,12 @@ NodeWebkitGenerator.prototype.askForGithubName = function askForGithubName() {
 
 NodeWebkitGenerator.prototype.askForInstallExamples = function askForInstallExamples() {
   var done = this.async();
-  var prompts = [
-    {
-      type: 'confirm',
-      name: 'installExamples',
-      message: 'Do you want to install one of the node-webkit examples?',
-      default: false
-    }
-  ];
+  var prompts = [{
+    type: 'confirm',
+    name: 'installExamples',
+    message: 'Do you want to install one of the node-webkit examples?',
+    default: false
+  }];
   this.prompt(prompts, function (props) {
     this.installExamples = props.installExamples;
     done();
@@ -150,14 +140,12 @@ NodeWebkitGenerator.prototype.getGithubUserInfo = function getGithubUserInfo() {
 NodeWebkitGenerator.prototype.getExampleList = function getExampleList() {
   var done = this.async();
   if (this.installExamples) {
-    var prompts = [
-      {
-        type: 'list',
-        name: 'example',
-        message: 'Which example do you want to install?',
-        choices: []
-      }
-    ];
+    var prompts = [{
+      type: 'list',
+      name: 'example',
+      message: 'Which example do you want to install?',
+      choices: []
+    }];
 
     this.examplesAPI = new Examples(this);
     this.log.info('Getting list of available examples.');
