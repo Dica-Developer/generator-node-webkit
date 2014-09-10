@@ -19,7 +19,7 @@
     "url": "git://github.com/Dica-Developer/generator-node-webkit.git"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test -R mocha-lcov-reporter | coveralls"
   },
   "dependencies": {
     "yeoman-generator": "^0.17.2",
@@ -36,8 +36,7 @@
     "temp": ">=0.8.1",
     "chai": ">=1.9.1",
     "mocha-lcov-reporter": ">=0.0.1",
-    "istanbul": ">=0.1.46",
-    "coveralls": ">=2.6.0"
+    "coveralls": ">=2.11.1"
   },
   "peerDependencies": {
     "yo": ">=1.0.0"
