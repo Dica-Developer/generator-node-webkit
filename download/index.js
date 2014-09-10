@@ -25,14 +25,12 @@ module.exports = yeoman.generators.Base.extend({
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
-    var prompts = [
-      {
-        type: 'confirm',
-        name: 'downloadNodeWebkit',
-        message: 'Do you want to download node-webkit?',
-        default: true
-      }
-    ];
+    var prompts = [{
+      type: 'confirm',
+      name: 'downloadNodeWebkit',
+      message: 'Do you want to download node-webkit?',
+      default: true
+    }];
     this.prompt(prompts, function (props) {
       this.downloadNodeWebkit = props.downloadNodeWebkit;
       done();
@@ -42,34 +40,32 @@ module.exports = yeoman.generators.Base.extend({
   askForVersion: function askForInstallLatesVersion() {
     var done = this.async(),
       _this = this;
-    var prompts = [
-      {
-        type: 'input',
-        name: 'nodeWebkitVersion',
-        message: 'Please specify which version of node-webkit you want download',
-        default: _this.defaultNodeWebkitVersion,
-        when: function () {
-          return _this.downloadNodeWebkit;
-        },
-        validate: function (answer) {
-          var validateDone = this.async(),
-            url = _this._getDownloadTmpUrl(answer);
+    var prompts = [{
+      type: 'input',
+      name: 'nodeWebkitVersion',
+      message: 'Please specify which version of node-webkit you want download',
+      default: _this.defaultNodeWebkitVersion,
+      when: function () {
+        return _this.downloadNodeWebkit;
+      },
+      validate: function (answer) {
+        var validateDone = this.async(),
+          url = _this._getDownloadTmpUrl(answer);
 
-          _this.log.info('Check if version "' + answer + '" is available for download.');
-          request.head(url, function (error, response) {
-            if (error) {
-              _this.log.conflict(error);
-            }
-            if (response.statusCode === 200) {
-              _this.log.ok('Use version "' + answer + '".');
-              validateDone(true);
-            } else {
-              validateDone('No download url found for version "' + answer + '"!');
-            }
-          });
-        }
+        _this.log.info('Check if version "' + answer + '" is available for download.');
+        request.head(url, function (error, response) {
+          if (error) {
+            _this.log.conflict(error);
+          }
+          if (response.statusCode === 200) {
+            _this.log.ok('Use version "' + answer + '".');
+            validateDone(true);
+          } else {
+            validateDone('No download url found for version "' + answer + '"!');
+          }
+        });
       }
-    ];
+    }];
 
     this.prompt(prompts, function (props) {
       this.nodeWebkitVersion = props.nodeWebkitVersion;
@@ -79,52 +75,51 @@ module.exports = yeoman.generators.Base.extend({
   askForPlatform: function askForPlatform() {
     var done = this.async(),
       _this = this,
-      prompts = [
-        {
-          type: 'checkbox',
-          name: 'platforms',
-          message: 'Which platform do you wanna support?',
-          choices: [
-            {
-              name: 'MacOS',
-              checked: 'darwin' === process.platform
-            },
-            {
-              name: 'Linux 64',
-              checked: 'linux' === process.platform
-            },
-            {
-              name: 'Linux 32',
-              checked: false
-            },
-            {
-              name: 'Windows',
-              checked: 'win32' === process.platform
-            }
-          ],
-          when: function () {
-            return _this.downloadNodeWebkit;
-          },
-          validate: function (answer) {
-            if (answer.length < 1) {
-              return 'You must choose at least one platform.';
-            }
-            return true;
+      prompts = [{
+        type: 'checkbox',
+        name: 'platforms',
+        message: 'Which platform do you wanna support?',
+        choices: [{
+          name: 'MacOS 32',
+          checked: 'darwin' === process.platform
+        }, {
+          name: 'MacOS 64',
+          checked: false
+        }, {
+          name: 'Linux 64',
+          checked: 'linux' === process.platform
+        }, {
+          name: 'Linux 32',
+          checked: false
+        }, {
+          name: 'Windows',
+          checked: 'win32' === process.platform
+        }],
+        when: function () {
+          return _this.downloadNodeWebkit;
+        },
+        validate: function (answer) {
+          if (answer.length < 1) {
+            return 'You must choose at least one platform.';
           }
+          return true;
         }
-      ];
-
+      }];
 
     this.prompt(prompts, function (props) {
       _this.platforms = props.platforms;
-      _this.MacOS = false;
+      _this.MacOS32 = false;
+      _this.MacOS64 = false;
       _this.Linux64 = false;
       _this.Windows = false;
-      if(_this.downloadNodeWebkit){
+      if (_this.downloadNodeWebkit) {
         _this.platforms.forEach(function (platform) {
           switch (platform) {
-          case 'MacOS':
-            _this.MacOS = true;
+          case 'MacOS 32':
+            _this.MacOS32 = true;
+            break;
+          case 'MacOS 64':
+            _this.MacOS64 = true;
             break;
           case 'Linux 64':
             _this.Linux64 = true;
@@ -145,9 +140,13 @@ module.exports = yeoman.generators.Base.extend({
     this.log.info('Creating folder structure for node-webkit source.');
     this.mkdir('resources/node-webkit');
     this.log.ok('Created: "resources/node-webkit"');
-    if (this.MacOS) {
-      this.mkdir('resources/node-webkit/MacOS');
-      this.log.ok('Created: "resources/node-webkit/MacOS"');
+    if (this.MacOS32) {
+      this.mkdir('resources/node-webkit/MacOS32');
+      this.log.ok('Created: "resources/node-webkit/MacOS32"');
+    }
+    if (this.MacOS64) {
+      this.mkdir('resources/node-webkit/MacOS64');
+      this.log.ok('Created: "resources/node-webkit/MacOS64"');
     }
     if (this.Linux64) {
       this.mkdir('resources/node-webkit/Linux64');
@@ -181,8 +180,11 @@ module.exports = yeoman.generators.Base.extend({
   },
   _getNodeWebkit: function _getNodeWebkit() {
     var promises = [];
-    if (this.MacOS) {
-      promises.push(this._requestNodeWebkit('osx-ia32', '.zip', 'MacOS'));
+    if (this.MacOS32) {
+      promises.push(this._requestNodeWebkit('osx-ia32', '.zip', 'MacOS32'));
+    }
+    if (this.MacOS64) {
+      promises.push(this._requestNodeWebkit('osx-x64', '.zip', 'MacOS64'));
     }
     if (this.Linux64) {
       promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz', 'Linux64'));
@@ -247,8 +249,11 @@ module.exports = yeoman.generators.Base.extend({
   _unzipNodeWebkit: function _unzipNodeWebkit() {
     var promises = [];
 
-    if (this.MacOS) {
-      promises.push(this._extract('MacOS', '.zip'));
+    if (this.MacOS32) {
+      promises.push(this._extract('MacOS32', '.zip'));
+    }
+    if (this.MacOS64) {
+      promises.push(this._extract('MacOS64', '.zip'));
     }
     if (this.Linux64) {
       promises.push(this._extract('Linux64', '.tar.gz'));
@@ -279,8 +284,13 @@ module.exports = yeoman.generators.Base.extend({
           defer.resolve();
         });
 
+        var stripLevel = 0;
+        if ('MacOS64' === platform || this.nodeWebkitVersion.indexOf('v0.9.') === -1 && this.nodeWebkitVersion.indexOf('v0.8.') === -1) {
+          stripLevel = 1;
+        }
         unzipper.extract({
-          path: 'resources/node-webkit/' + platform
+          path: 'resources/node-webkit/' + platform,
+          strip: stripLevel
         });
       } else {
         defer.resolve();
