@@ -22,14 +22,14 @@
     "test": "mocha test -R mocha-lcov-reporter | coveralls"
   },
   "dependencies": {
-    "yeoman-generator": "^0.17.2",
-    "fs-extra": "^0.10.0",
-    "when": "^3.4.3",
+    "decompress-zip": "git://github.com/mschaaf/decompress-zip.git#patch-1",
+    "fs-extra": ">=0.10.0",
     "github": "^0.2.1",
-    "tar-fs": "^0.4.1",
     "request": "^2.40.0",
+    "tar-fs": ">=0.4.1",
     "temp": ">=0.8.1",
-    "decompress-zip" : "git://github.com/mschaaf/decompress-zip.git#patch-1"
+    "when": "^3.4.3",
+    "yeoman-generator": "^0.17.2"
   },
   "devDependencies": {
     "mocha": ">=1.21.4",
