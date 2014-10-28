@@ -5,6 +5,8 @@
 [![NPM version](https://badge.fury.io/js/generator-node-webkit.png)](http://badge.fury.io/js/generator-node-webkit)
 [![Coverage Status](https://img.shields.io/coveralls/Dica-Developer/generator-node-webkit.svg)](https://coveralls.io/r/Dica-Developer/generator-node-webkit)
 [![downloads per month](http://img.shields.io/npm/dm/generator-node-webkit.svg)](https://www.npmjs.org/package/generator-node-webkit)
+[![current version](http://img.shields.io/npm/v/generator-node-webkit.svg)](https://www.npmjs.org/package/generator-node-webkit)
+[![license](http://img.shields.io/npm/l/generator-node-webkit.svg)](http://en.wikipedia.org/wiki/MIT_License)
 
 Required software:
 
