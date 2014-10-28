@@ -28,8 +28,8 @@
     "github": "^0.2.1",
     "tar-fs": "^0.4.1",
     "request": "^2.40.0",
-    "decompress-zip": "0.0.8",
-    "temp": ">=0.8.1"
+    "temp": ">=0.8.1",
+    "decompress-zip" : "git://github.com/mschaaf/decompress-zip.git#patch-1"
   },
   "devDependencies": {
     "mocha": ">=1.21.4",
@@ -45,7 +45,9 @@
     "node": ">=0.10.0",
     "npm": ">=1.2.10"
   },
-  "licenses": [{
-    "type": "MIT"
-  }]
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ]
 }
