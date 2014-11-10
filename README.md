@@ -8,6 +8,7 @@
 [![current version](http://img.shields.io/npm/v/generator-node-webkit.svg)](https://www.npmjs.org/package/generator-node-webkit)
 [![license](http://img.shields.io/npm/l/generator-node-webkit.svg)](http://en.wikipedia.org/wiki/MIT_License)
 [![open issues](http://img.shields.io/github/issues/Dica-Developer/generator-node-webkit.svg)](https://github.com/Dica-Developer/generator-node-webkit/issues)
+[![Stories in Ready](https://badge.waffle.io/dica-developer/generator-node-webkit.png?label=ready&title=Ready)](https://waffle.io/dica-developer/generator-node-webkit)
 
 Required software:
 
