@@ -3,7 +3,7 @@
 
 var yeoman = require('yeoman-generator');
 var when = require('when');
-var http = require('http');
+var http = require('follow-redirects').http;
 var request = require('request');
 var fs = require('fs-extra');
 var DecompressZip = require('decompress-zip');
@@ -11,17 +11,19 @@ var tar = require('tar-fs');
 var zlib = require('zlib');
 
 module.exports = yeoman.generators.Base.extend({
-  constructor: function () {
+  constructor: function() {
     yeoman.generators.Base.apply(this, arguments);
     this.defaultNodeWebkitVersion = 'v0.10.5';
     this.nodeWebkitVersion = 'v0.10.5';
     this.downloadNodeWebkit = true;
   },
-  _getDownloadUrl: function () {
-    return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  _getDownloadUrl: function() {
+    return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion +
+      '/node-webkit-' + this.nodeWebkitVersion + '-';
   },
-  _getDownloadTmpUrl: function (version) {
-    return 'http://dl.node-webkit.org/' + version + '/node-webkit-' + version + '-linux-x64.tar.gz';
+  _getDownloadTmpUrl: function(version) {
+    return 'http://dl.node-webkit.org/' + version + '/node-webkit-' +
+      version + '-linux-x64.tar.gz';
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
@@ -31,7 +33,7 @@ module.exports = yeoman.generators.Base.extend({
       message: 'Do you want to download node-webkit?',
       default: true
     }];
-    this.prompt(prompts, function (props) {
+    this.prompt(prompts, function(props) {
       this.downloadNodeWebkit = props.downloadNodeWebkit;
       done();
     }.bind(this));
@@ -45,15 +47,16 @@ module.exports = yeoman.generators.Base.extend({
       name: 'nodeWebkitVersion',
       message: 'Please specify which version of node-webkit you want download',
       default: _this.defaultNodeWebkitVersion,
-      when: function () {
+      when: function() {
         return _this.downloadNodeWebkit;
       },
-      validate: function (answer) {
+      validate: function(answer) {
         var validateDone = this.async(),
           url = _this._getDownloadTmpUrl(answer);
 
-        _this.log.info('Check if version "' + answer + '" is available for download.');
-        request.head(url, function (error, response) {
+        _this.log.info('Check if version "' + answer +
+          '" is available for download.');
+        request.head(url, function(error, response) {
           if (error) {
             _this.log.conflict(error);
           }
@@ -61,13 +64,14 @@ module.exports = yeoman.generators.Base.extend({
             _this.log.ok('Use version "' + answer + '".');
             validateDone(true);
           } else {
-            validateDone('No download url found for version "' + answer + '"!');
+            validateDone('No download url found for version "' +
+              answer + '"!');
           }
         });
       }
     }];
 
-    this.prompt(prompts, function (props) {
+    this.prompt(prompts, function(props) {
       this.nodeWebkitVersion = props.nodeWebkitVersion;
       done();
     }.bind(this));
@@ -95,10 +99,10 @@ module.exports = yeoman.generators.Base.extend({
           name: 'Windows',
           checked: 'win32' === process.platform
         }],
-        when: function () {
+        when: function() {
           return _this.downloadNodeWebkit;
         },
-        validate: function (answer) {
+        validate: function(answer) {
           if (answer.length < 1) {
             return 'You must choose at least one platform.';
           }
@@ -106,30 +110,30 @@ module.exports = yeoman.generators.Base.extend({
         }
       }];
 
-    this.prompt(prompts, function (props) {
+    this.prompt(prompts, function(props) {
       _this.platforms = props.platforms;
       _this.MacOS32 = false;
       _this.MacOS64 = false;
       _this.Linux64 = false;
       _this.Windows = false;
       if (_this.downloadNodeWebkit) {
-        _this.platforms.forEach(function (platform) {
+        _this.platforms.forEach(function(platform) {
           switch (platform) {
-          case 'MacOS 32':
-            _this.MacOS32 = true;
-            break;
-          case 'MacOS 64':
-            _this.MacOS64 = true;
-            break;
-          case 'Linux 64':
-            _this.Linux64 = true;
-            break;
-          case 'Linux 32':
-            _this.Linux32 = true;
-            break;
-          case 'Windows':
-            _this.Windows = true;
-            break;
+            case 'MacOS 32':
+              _this.MacOS32 = true;
+              break;
+            case 'MacOS 64':
+              _this.MacOS64 = true;
+              break;
+            case 'Linux 64':
+              _this.Linux64 = true;
+              break;
+            case 'Linux 32':
+              _this.Linux32 = true;
+              break;
+            case 'Windows':
+              _this.Windows = true;
+              break;
           }
         });
       }
@@ -166,10 +170,10 @@ module.exports = yeoman.generators.Base.extend({
   getNodeWebkit: function getNodeWebkit() {
     var done = this.async();
 
-    var successClbk = function () {
+    var successClbk = function() {
       done();
     };
-    var failureClbk = function (error) {
+    var failureClbk = function(error) {
       throw error;
     };
     if (this.downloadNodeWebkit) {
@@ -187,17 +191,20 @@ module.exports = yeoman.generators.Base.extend({
       promises.push(this._requestNodeWebkit('osx-x64', '.zip', 'MacOS64'));
     }
     if (this.Linux64) {
-      promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz', 'Linux64'));
+      promises.push(this._requestNodeWebkit('linux-x64', '.tar.gz',
+        'Linux64'));
     }
     if (this.Linux32) {
-      promises.push(this._requestNodeWebkit('linux-ia32', '.tar.gz', 'Linux32'));
+      promises.push(this._requestNodeWebkit('linux-ia32', '.tar.gz',
+        'Linux32'));
     }
     if (this.Windows) {
       promises.push(this._requestNodeWebkit('win-ia32', '.zip', 'Windows'));
     }
     return promises;
   },
-  _requestNodeWebkit: function _requestNodeWebkit(versionString, extension, platform) {
+  _requestNodeWebkit: function _requestNodeWebkit(versionString, extension,
+    platform) {
     var defer = when.defer(),
       _this = this;
 
@@ -206,24 +213,31 @@ module.exports = yeoman.generators.Base.extend({
         fs.unlinkSync('tmp/' + platform + extension + '.part');
       }
       this.log.info('Downloading node-webkit for ' + platform);
-      http.get(this._getDownloadUrl() + versionString + extension, function (res) {
-        if (200 === res.statusCode) {
-          res.on('data', function (chunk) {
-            fs.appendFileSync('tmp/' + platform + extension + '.part', chunk);
-          }).on('end', function () {
-            fs.renameSync('tmp/' + platform + extension + '.part', 'tmp/' + platform + extension);
-            _this.log.ok('Node-webkit for ' + platform + ' downloaded');
-            defer.resolve();
-          }).on('error', function (error) {
-            _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
-            defer.reject(error);
-          });
-        } else {
-          _this.log.conflict('Wrong content type for %s', platform);
-          defer.reject('Wrong content type for ' + platform);
-        }
-      }).on('error', function (error) {
-        _this.log.conflict('Error while downloading node-webkit for ' + platform, error);
+      http.get(this._getDownloadUrl() + versionString + extension,
+        function(res) {
+          if (200 === res.statusCode) {
+            res.on('data', function(chunk) {
+              fs.appendFileSync('tmp/' + platform + extension +
+                '.part', chunk);
+            }).on('end', function() {
+              fs.renameSync('tmp/' + platform + extension + '.part',
+                'tmp/' + platform + extension);
+              _this.log.ok('Node-webkit for ' + platform +
+                ' downloaded');
+              defer.resolve();
+            }).on('error', function(error) {
+              _this.log.conflict(
+                'Error while downloading node-webkit for ' +
+                platform, error);
+              defer.reject(error);
+            });
+          } else {
+            _this.log.conflict('Wrong content type for %s', platform);
+            defer.reject('Wrong content type for ' + platform);
+          }
+        }).on('error', function(error) {
+        _this.log.conflict('Error while downloading node-webkit for ' +
+          platform, error);
         defer.reject(error);
       });
     } else {
@@ -234,10 +248,10 @@ module.exports = yeoman.generators.Base.extend({
   },
   unzipNodeWebkit: function unzipNodeWebkit() {
     var done = this.async();
-    var successClbk = function () {
+    var successClbk = function() {
       done();
     };
-    var failureClbk = function (error) {
+    var failureClbk = function(error) {
       throw error;
     };
     if (this.downloadNodeWebkit) {
@@ -274,18 +288,21 @@ module.exports = yeoman.generators.Base.extend({
         this.log.info('Unzip %s files.', platform);
         var unzipper = new DecompressZip('tmp/' + platform + extension);
 
-        unzipper.on('error', function (error) {
-          _this.log.conflict('Error while unzipping "tmp/' + platform + extension + '"', error);
+        unzipper.on('error', function(error) {
+          _this.log.conflict('Error while unzipping "tmp/' + platform +
+            extension + '"', error);
           defer.reject(error);
         });
 
-        unzipper.on('extract', function () {
+        unzipper.on('extract', function() {
           _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
           defer.resolve();
         });
 
         var stripLevel = 0;
-        if ('MacOS64' === platform || this.nodeWebkitVersion.indexOf('v0.9.') === -1 && this.nodeWebkitVersion.indexOf('v0.8.') === -1) {
+        if ('MacOS64' === platform || this.nodeWebkitVersion.indexOf(
+            'v0.9.') === -1 && this.nodeWebkitVersion.indexOf('v0.8.') ===
+          -1) {
           stripLevel = 1;
         }
         unzipper.extract({
@@ -299,19 +316,25 @@ module.exports = yeoman.generators.Base.extend({
       this.log.info('Un.tar.gz %s files.', platform);
       var src = 'tmp/' + platform + extension;
       var dst = 'resources/node-webkit/' + platform;
-      fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function (error) {
+      fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(
+        dst)).on('finish', function(error) {
         if (!error) {
-          var platformSuffix = platform === 'Linux64' ? '-linux-x64' : '-linux-ia32';
-          var copyPath = 'resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + platformSuffix;
-          fs.copy(copyPath, 'resources/node-webkit/' + platform, function (error) {
-            if (error) {
-              defer.reject(error);
-            } else {
-              fs.remove(copyPath);
-              _this.log.ok('%s directory successfully copied.', platform);
-              defer.resolve();
-            }
-          });
+          var platformSuffix = platform === 'Linux64' ? '-linux-x64' :
+            '-linux-ia32';
+          var copyPath = 'resources/node-webkit/' + platform +
+            '/node-webkit-' + _this.nodeWebkitVersion +
+            platformSuffix;
+          fs.copy(copyPath, 'resources/node-webkit/' + platform,
+            function(error) {
+              if (error) {
+                defer.reject(error);
+              } else {
+                fs.remove(copyPath);
+                _this.log.ok('%s directory successfully copied.',
+                  platform);
+                defer.resolve();
+              }
+            });
         } else {
           defer.reject(error);
         }
