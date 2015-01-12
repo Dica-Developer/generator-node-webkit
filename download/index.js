@@ -3,7 +3,7 @@
 
 var yeoman = require('yeoman-generator');
 var when = require('when');
-var http = require('http');
+var http = require('follow-redirects').http;
 var request = require('request');
 var fs = require('fs-extra');
 var DecompressZip = require('decompress-zip');
