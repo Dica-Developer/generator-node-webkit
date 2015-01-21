@@ -307,7 +307,7 @@ module.exports = yeoman.generators.Base.extend({
             if (error) {
               defer.reject(error);
             } else {
-              f.remove(copyPath);
+              fs.remove(copyPath);
               _this.log.ok('%s directory successfully copied.', platform);
               defer.resolve();
             }
