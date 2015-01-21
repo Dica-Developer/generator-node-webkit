@@ -18,10 +18,10 @@ module.exports = yeoman.generators.Base.extend({
     this.downloadNodeWebkit = true;
   },
   _getDownloadUrl: function () {
-    return 'http://dl.node-webkit.org/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+    return 'http://dl.nwjs.io/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
   },
   _getDownloadTmpUrl: function (version) {
-    return 'http://dl.node-webkit.org/' + version + '/node-webkit-' + version + '-linux-x64.tar.gz';
+    return 'http://dl.nwjs.io/' + version + '/node-webkit-' + version + '-linux-x64.tar.gz';
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
@@ -307,7 +307,7 @@ module.exports = yeoman.generators.Base.extend({
             if (error) {
               defer.reject(error);
             } else {
-              fs.remove(copyPath);
+              f.remove(copyPath);
               _this.log.ok('%s directory successfully copied.', platform);
               defer.resolve();
             }
