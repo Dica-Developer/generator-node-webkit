@@ -1,4 +1,6 @@
 # generator-node-webkit
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Dica-Developer/generator-node-webkit?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
 [![Dependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit.png)](https://david-dm.org/Dica-Developer/generator-node-webkit)
 [![devDependency Status](https://david-dm.org/Dica-Developer/generator-node-webkit/dev-status.png)](https://david-dm.org/Dica-Developer/generator-node-webkit#info=devDependencies)
