@@ -13,15 +13,23 @@ var zlib = require('zlib');
 module.exports = yeoman.generators.Base.extend({
   constructor: function () {
     yeoman.generators.Base.apply(this, arguments);
-    this.defaultNodeWebkitVersion = 'v0.10.5';
-    this.nodeWebkitVersion = 'v0.10.5';
+    this.defaultNodeWebkitVersion = 'v0.12.0';
+    this.nodeWebkitVersion = 'v0.12.0';
     this.downloadNodeWebkit = true;
   },
-  _getDownloadUrl: function () {
-    return 'http://dl.nwjs.io/' + this.nodeWebkitVersion + '/node-webkit-' + this.nodeWebkitVersion + '-';
+  _getDownloadUrl: function() {
+    var namePart = '/nwjs-';
+    if (this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
+      namePart = '/node-webkit-';
+    }
+    return 'http://dl.nwjs.io/' + this.nodeWebkitVersion + namePart + this.nodeWebkitVersion + '-';
   },
-  _getDownloadTmpUrl: function (version) {
-    return 'http://dl.nwjs.io/' + version + '/node-webkit-' + version + '-linux-x64.tar.gz';
+  _getDownloadTmpUrl: function(version) {
+    var namePart = '/nwjs-';
+    if (this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
+      namePart = '/node-webkit-';
+    }
+    return 'http://dl.nwjs.io/' + version + namePart + version + '-linux-x64.tar.gz';
   },
   askForInstallNodeWebkit: function askForInstallNodeWebkit() {
     var done = this.async();
@@ -61,7 +69,7 @@ module.exports = yeoman.generators.Base.extend({
             _this.log.ok('Use version "' + answer + '".');
             validateDone(true);
           } else {
-            validateDone('No download url found for version "' + answer + '"!');
+            validateDone('No download url found for version "' + answer + '" (' + url + ')!');
           }
         });
       }
@@ -281,6 +289,9 @@ module.exports = yeoman.generators.Base.extend({
 
         unzipper.on('extract', function () {
           _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
+          if (fs.existsSync('resources/node-webkit/' + platform + '/nwjs.app')) {
+            fs.renameSync('resources/node-webkit/' + platform + '/nwjs.app', 'resources/node-webkit/' + platform + '/node-webkit.app');
+          }
           defer.resolve();
         });
 
@@ -302,8 +313,12 @@ module.exports = yeoman.generators.Base.extend({
       fs.createReadStream(src).pipe(zlib.createGunzip()).pipe(tar.extract(dst)).on('finish', function (error) {
         if (!error) {
           var platformSuffix = platform === 'Linux64' ? '-linux-x64' : '-linux-ia32';
-          var copyPath = 'resources/node-webkit/' + platform + '/node-webkit-' + _this.nodeWebkitVersion + platformSuffix;
-          fs.copy(copyPath, 'resources/node-webkit/' + platform, function (error) {
+          var namePart = '/nwjs-';
+          if (this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
+            namePart = '/node-webkit-';
+          }
+          var copyPath = 'resources/node-webkit/' + platform + namePart + _this.nodeWebkitVersion + platformSuffix;
+          fs.copy(copyPath, 'resources/node-webkit/' + platform, function(error) {
             if (error) {
               defer.reject(error);
             } else {
