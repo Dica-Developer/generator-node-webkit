@@ -314,7 +314,7 @@ module.exports = yeoman.generators.Base.extend({
         if (!error) {
           var platformSuffix = platform === 'Linux64' ? '-linux-x64' : '-linux-ia32';
           var namePart = '/nwjs-';
-          if (this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
+          if (_this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || _this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || _this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || _this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
             namePart = '/node-webkit-';
           }
           var copyPath = 'resources/node-webkit/' + platform + namePart + _this.nodeWebkitVersion + platformSuffix;
