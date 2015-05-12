@@ -1,11 +1,11 @@
 {
-  "name": "<%= _.slugify(appName) %>",
+  "name": "<%= appName %>",
   "version": "0.0.0",
   "description": "<%= description %>",
   "keywords": [],
   <% if(github) {%>
-    "homepage": "<%= githubUrl %>/<%= _.slugify(appName) %>",
-    "bugs": "<%= githubUrl %>/<%= _.slugify(appName) %>/issues",
+    "homepage": "<%= githubUrl %>/<%= appName %>",
+    "bugs": "<%= githubUrl %>/<%= appName %>/issues",
     "author": {
       "name": "<%= realname %>",
       "email": "",
@@ -13,7 +13,7 @@
     },
     "repository": {
       "type": "git",
-      "url": "git://github.com/<%= githubUser %>/<%= _.slugify(appName) %>.git"
+      "url": "git://github.com/<%= githubUser %>/<%= appName %>.git"
     },
   <% } %>
   "dependencies": {},

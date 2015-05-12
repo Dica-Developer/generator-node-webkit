@@ -1,5 +1,5 @@
 {
-  "name": "<%= _.slugify(appName) %>",
+  "name": "<%= appName %>",
   "main": "views/index.html",
   "version": "0.0.1",
   "single-instance": true,
