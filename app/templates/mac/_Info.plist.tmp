@@ -7,7 +7,7 @@
 	<key>CFBundleDisplayName</key>
 	<string><%= appName %></string>
 	<key>CFBundleExecutable</key>
-	<string>node-webkit</string>
+	<string><%%= nwExecutableName %></string>
 	<% if(github) {%>
 	<key>CFBundleGetInfoString</key>
 	<string>© <%= realname %>, 2013</string>

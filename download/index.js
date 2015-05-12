@@ -77,6 +77,7 @@ module.exports = yeoman.generators.Base.extend({
 
     this.prompt(prompts, function (props) {
       this.nodeWebkitVersion = props.nodeWebkitVersion;
+      this.template('_.yo-rc.json', '.yo-rc.json');
       done();
     }.bind(this));
   },

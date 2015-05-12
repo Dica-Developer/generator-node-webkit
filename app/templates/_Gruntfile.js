@@ -356,6 +356,26 @@ module.exports = function (grunt) {
     });
   });
 
+  grunt.registerTask('createPlistFile', 'set node webkit and app relevant information to a new plist file', function() {
+    var metadata = grunt.file.readJSON('.yo-rc.json');
+    var resourcesPath = config.resources;
+    var nwExecuteable = 'nwjs';
+    if (metadata.nodeWebkitVersion.indexOf('v0.8.') === 0 || metadata.nodeWebkitVersion.indexOf('v0.9.') === 0 || metadata.nodeWebkitVersion.indexOf('v0.10.') === 0 || metadata.nodeWebkitVersion.indexOf('v0.11.') === 0) {
+      nwExecuteable = 'node-webkit';
+    }
+    var infoPlistTmp = grunt.file.read(resourcesPath + '/mac/Info.plist.tmp', {
+      encoding: 'UTF8'
+    });
+    var infoPlist = grunt.template.process(infoPlistTmp, {
+      data: {
+        nwExecutableName: nwExecuteable
+      }
+    });
+    grunt.file.write(resourcesPath + '/mac/Info.plist', infoPlist, {
+      encoding: 'UTF8'
+    });
+  })
+
   grunt.registerTask('dist-linux', [
     'jshint',
     'clean:distLinux64',
@@ -383,6 +403,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dist-mac', [
     'jshint',
     'clean:distMac64',
+    'createPlistFile',
     'copy:webkit64',
     'copy:appMacos64',
     'rename:macApp64',
@@ -392,6 +413,7 @@ module.exports = function (grunt) {
   grunt.registerTask('dist-mac32', [
     'jshint',
     'clean:distMac32',
+    'createPlistFile',
     'copy:webkit32',
     'copy:appMacos32',
     'rename:macApp32',

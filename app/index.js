@@ -181,14 +181,13 @@ NodeWebkitGenerator.prototype.processProjectfiles = function processProjectfiles
   this.template('_package.json', 'package.json');
   this.template('_Gruntfile.js', 'Gruntfile.js');
   this.template('mac/_Info.plist.tmp', 'resources/mac/Info.plist.tmp');
-  this.template('mac/_Info.plist', 'resources/mac/Info.plist');
 };
 
 NodeWebkitGenerator.prototype.processAppFiles = function processAppFiles() {
   var done = this.async();
   if (this.installExamples) {
     this.examplesAPI.downloadAndInstallExamples(this.example)
-      .then(function () {
+      .then(function() {
         done();
       });
   } else {
