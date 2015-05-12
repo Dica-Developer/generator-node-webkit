@@ -11,8 +11,8 @@ module.exports = function (grunt) {
   var config = {
     app: 'app',
     dist: 'dist',
-    distMac32: 'dist/MacOS32',
-    distMac64: 'dist/MacOS64',
+    distMac32: 'dist/macOS',
+    distMac64: 'dist/macOS',
     distLinux32: 'dist/Linux32',
     distLinux64: 'dist/Linux64',
     distWin: 'dist/Win',
