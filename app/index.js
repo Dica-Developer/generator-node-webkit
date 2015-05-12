@@ -6,6 +6,8 @@ var path = require('path');
 var yeoman = require('yeoman-generator');
 var url = require('url');
 var GitHubApi = require('github');
+var _ = require('lodash');
+var readFileAsString = require("html-wiring").readFileAsString;
 
 var Examples = require('./examples.js');
 
@@ -18,7 +20,7 @@ var NodeWebkitGenerator = module.exports = function NodeWebkitGenerator(args, op
     });
   });
 
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+  this.pkg = JSON.parse(readFileAsString(path.join(__dirname, '../package.json')));
   this.github = false;
 };
 
@@ -33,7 +35,7 @@ NodeWebkitGenerator.prototype.welcome = function welcome() {
 NodeWebkitGenerator.prototype.askForAppName = function askForAppName() {
   var done = this.async();
   var basePath = path.basename(process.env.PWD);
-  var appName = this._.camelize(basePath);
+  var appName = _.camelCase(basePath);
 
   var prompts = [{
     name: 'appName',
