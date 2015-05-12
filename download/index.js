@@ -26,7 +26,7 @@ module.exports = yeoman.generators.Base.extend({
   },
   _getDownloadTmpUrl: function(version) {
     var namePart = '/nwjs-';
-    if (this.nodeWebkitVersion.indexOf('v0.9.') !== -1 || this.nodeWebkitVersion.indexOf('v0.8.') !== -1 || this.nodeWebkitVersion.indexOf('v0.10.') !== -1 || this.nodeWebkitVersion.indexOf('v0.11.') !== -1) {
+    if (version.indexOf('v0.9.') !== -1 || version.indexOf('v0.8.') !== -1 || version.indexOf('v0.10.') !== -1 || version.indexOf('v0.11.') !== -1) {
       namePart = '/node-webkit-';
     }
     return 'http://dl.nwjs.io/' + version + namePart + version + '-linux-x64.tar.gz';
