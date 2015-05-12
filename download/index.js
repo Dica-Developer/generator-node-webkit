@@ -291,6 +291,9 @@ module.exports = yeoman.generators.Base.extend({
         unzipper.on('extract', function () {
           _this.log.ok('"tmp/%s.zip" successfully unzipped', platform);
           if (fs.existsSync('resources/node-webkit/' + platform + '/nwjs.app')) {
+            if (fs.existsSync('resources/node-webkit/' + platform + '/node-webkit.app')) {
+              fs.removeSync('resources/node-webkit/' + platform + '/node-webkit.app');
+            }
             fs.renameSync('resources/node-webkit/' + platform + '/nwjs.app', 'resources/node-webkit/' + platform + '/node-webkit.app');
           }
           defer.resolve();
