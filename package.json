@@ -32,7 +32,8 @@
     "tar-fs": "^1.4.2",
     "temp": ">=0.8.1",
     "when": "^3.7.2",
-    "yeoman-generator": "^0.18.7"
+    "yeoman-generator": "^0.18.7",
+    "yeoman-welcome": "~1.0.1"
   },
   "devDependencies": {
     "chai": "^1.10.0",

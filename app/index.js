@@ -8,6 +8,7 @@ var url = require('url');
 var GitHubApi = require('github');
 var _ = require('lodash');
 var readFileAsString = require("html-wiring").readFileAsString;
+var welcomeMessage = require('yeoman-welcome');
 
 var Examples = require('./examples.js');
 
@@ -28,7 +29,7 @@ util.inherits(NodeWebkitGenerator, yeoman.generators.Base);
 
 NodeWebkitGenerator.prototype.welcome = function welcome() {
   if (!this.options['skip-welcome-message']) {
-    console.log(this.yeoman);
+    this.log(welcomeMessage);
   }
 };
 
