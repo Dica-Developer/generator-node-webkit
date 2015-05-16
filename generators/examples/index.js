@@ -5,6 +5,7 @@ var DecompressZip = require('decompress-zip');
 var request = require('request');
 var fs = require('fs');
 var fsExtra = require('fs-extra');
+var url = require('url');
 
 var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
 var githubOptions = {
