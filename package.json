@@ -1,0 +1,36 @@
+{
+    "name": "generator-node-webkit",
+    "version": "2.0.0",
+    "description": "A generator for node-webkit",
+    "keywords": [
+        "yeoman-generator",
+        "node-webkit"
+    ],
+    "homepage": "https://github.com/Dica-Developer/generator-node-webkit",
+    "bugs": "https://github.com/Dica-Developer/generator-node-webkit/issues",
+    "author": {
+        "name": "Dica-Developer",
+        "email": "",
+        "url": "https://github.com/Dica-Developer"
+    },
+    "license": "MIT",
+    "main": "app/index.js",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/Dica-Developer/generator-node-webkit.git"
+    },
+    "scripts": {
+        "test": "mocha test -R mocha-lcov-reporter | coveralls"
+    },
+    "files": [
+        "generators"
+    ],
+    "dependencies": {
+        "yeoman-generator": "^0.19.0",
+        "chalk": "^1.0.0",
+        "yosay": "^1.0.2"
+    },
+    "devDependencies": {
+        "mocha": "*"
+    }
+}
