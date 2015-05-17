@@ -73,6 +73,17 @@ module.exports = yeoman.generators.Base.extend({
         this.destinationPath('package.json'),
         this
       );
+
+      this.fs.copyTpl(
+        this.templatePath('resources/mac/_Info.plist.tmp'),
+        this.destinationPath('resources/mac/Info.plist.tmp'),
+        this
+      );
+
+      this.fs.copy(
+        this.templatePath('_Gruntfile.js'),
+        this.destinationPath('Gruntfile.js')
+      );
     },
 
     projectfiles: function () {
@@ -83,6 +94,10 @@ module.exports = yeoman.generators.Base.extend({
       this.fs.copy(
         this.templatePath('jshintrc'),
         this.destinationPath('.jshintrc')
+      );
+      this.fs.copy(
+        this.templatePath('gitignore'),
+        this.destinationPath('.gitignore')
       );
     }
   },
