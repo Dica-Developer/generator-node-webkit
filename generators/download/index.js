@@ -95,7 +95,7 @@ module.exports = yeoman.generators.Base.extend({
     }
   },
 
-  end: function(){
+  configuring: function(){
     this.config.set('nwjs', this.nwjs);
     this.config.save();
   },
