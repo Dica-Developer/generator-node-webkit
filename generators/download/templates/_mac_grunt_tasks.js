@@ -24,6 +24,13 @@ module.exports = function (grunt) {
             cwd: '${'<%= paths.app %>'}',
             dest: '${'<%= paths.dist %>'}/${taskname}/${nwExecutable}.app/Contents/Resources/app.nw',
             src: '**'
+          },
+          {
+            expand: true,
+            cwd: '${'<%= paths.resources %>'}/mac',
+            dest: '${'<%= paths.dist %>'}/${taskname}/${nwExecutable}.app/Contents/Resources',
+            filter: 'isFile',
+            src: '*.icns'
           }
         ]
       }

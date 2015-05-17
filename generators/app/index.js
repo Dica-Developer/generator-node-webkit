@@ -81,6 +81,12 @@ module.exports = yeoman.generators.Base.extend({
       );
 
       this.fs.copy(
+        this.templatePath('resources/mac/_icon.icns'),
+        this.destinationPath('resources/mac/icon.icns'),
+        this
+      );
+
+      this.fs.copy(
         this.templatePath('_Gruntfile.js'),
         this.destinationPath('Gruntfile.js')
       );
