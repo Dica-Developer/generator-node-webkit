@@ -100,10 +100,19 @@ module.exports = yeoman.generators.Base.extend({
       var platformName = this.nwjs.platform,
         taskname = platformName + '_' + this.nwjs.version,
         srcFolder = this._getNwjsFolderName(),
-        nwExecutable = semver.outside(this.nwjs.version, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs';
+        nwExecutable = semver.outside(this.nwjs.version, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
+        templateFile;
+
+      if(this.nwjs.platform.indexOf('Linux') > -1){
+        templateFile = '_linux_grunt_tasks.js'
+      } else if (this.nwjs.platform.indexOf('Windows') > -1) {
+        templateFile = '_win_grunt_tasks.js'
+      } else {
+        templateFile = '_mac_grunt_tasks.js'
+      }
 
       this.fs.copyTpl(
-        this.templatePath('_index.ejs'),
+        this.templatePath(templateFile),
         this.destinationPath('grunt-tasks/' + taskname +'.js'),
         {
           'taskname': taskname,

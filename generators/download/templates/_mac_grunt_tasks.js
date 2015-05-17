@@ -6,13 +6,10 @@ module.exports = function (grunt) {
       '${taskname}': {
         files: [{
           dot: true,
-          src: ['${'<%= paths.tmp %>'}/*', '${'<% paths.dist %>'}/${taskname}/*']
+          src: ['${'<%= paths.tmp %>'}/*', '${'<%= paths.dist %>'}/${taskname}/*']
         }]
       }
     },
-
-    //  copy nwjs sorce to build tmp
-    //  copy app into nwjs source
     copy: {
       '${taskname}': {
         files: [
@@ -21,25 +18,22 @@ module.exports = function (grunt) {
             cwd: '${'<%= paths.nwjsSource %>'}/${srcFolder}',
             dest: '${'<%= paths.tmp %>'}/${taskname}',
             src: '**'
-          }
-      <% if(platformName.indexOf('Mac') > -1) { %>
-          , {
+          },
+          {
             expand: true,
             cwd: '${'<%= paths.app %>'}',
             dest: '${'<%= paths.tmp %>'}/${taskname}/${nwExecutable}.app/Contents/Resources/app.nw',
             src: '**'
           }
-        <% } %>
         ]
       }
     }
   });
 
-<% if (platformName.indexOf('Mac') > -1) { %>
-  grunt.registerTask('plist-${taskname}', 'set node webkit and app relevant information to a new plist file', function() {
+  grunt.registerTask('plist-${taskname}', 'set node webkit and app relevant information to a new plist file', function () {
     var paths = grunt.config.get('paths');
-    var infoPlistTmp = grunt.file.read(paths.resources + '/mac/Info.plist.tmp', { encoding: 'UTF8' }),
-      infoPlist = grunt.template.process(infoPlistTmp, { data: { nwExecutable: '${nwExecutable}' } });
+    var infoPlistTmp = grunt.file.read(paths.resources + '/mac/Info.plist.tmp', {encoding: 'UTF8'}),
+      infoPlist = grunt.template.process(infoPlistTmp, {data: {nwExecutable: '${nwExecutable}'}});
 
     grunt.file.write(paths.tmp + '/${taskname}/${nwExecutable}.app/Contents/Info.plist', infoPlist, {
       encoding: 'UTF8'
@@ -56,20 +50,12 @@ module.exports = function (grunt) {
     fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper.app/Contents/MacOS/${nwExecutable} Helper', '555');
     fs.chmodSync(path + 'MacOS/${nwExecutable}', '555');
   });
-<% } %>
-
-
-  //build
-
-  //copy complete app to dist folder
 
   grunt.registerTask('${taskname}', [
     'clean:${taskname}',
     'copy:${taskname}',
-  <% if(platformName.indexOf('Mac') > -1) {%>
     'plist-${taskname}',
     'chmod-${taskname}'
-  <%}%>
   ]);
 
 };
