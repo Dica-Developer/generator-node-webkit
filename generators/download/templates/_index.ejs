@@ -1,0 +1,48 @@
+module.exports = function (grunt) {
+  'use strict';
+
+  grunt.config.merge({
+    clean: {
+      '<%= taskname %>': {
+        files: [{
+          dot: true,
+          src: ['<%%= paths.tmp %>/*', '<%%= paths.dist %>/<%= taskname %>/*']
+        }]
+      }
+    },
+
+    //copy nwjs sorce to build tmp
+    copy: {
+      '<%= taskname %>': {
+        files: [
+          {
+            expand: true,
+            cwd: '<%%= paths.nwjsSource %>/<%= taskname %>',
+            dest: '<%%= paths.tmp %>/<%= taskname %>',
+            src: '**'
+          }
+          <% if(platform === 'Mac64' || platform === 'Mac32') %>
+          , {
+            expand: true,
+            cwd: '<%%= paths.app %>',
+            dest: '<%%= paths.tmp %>/<%= taskname %>/nwjs.app/Contents/Resources/app.nw',
+            src: '**'
+          }
+        <% } %>
+        ]
+      }
+    }
+  });
+
+  //copy app into nwjs source
+
+  //build
+
+  //copy complete app to dist folder
+
+  grunt.registerTask('<%= taskname %>', function () {
+    grunt.task.run('clean:<%= taskname %>');
+    grunt.task.run('copy:<%= taskname %>');
+  });
+
+};
