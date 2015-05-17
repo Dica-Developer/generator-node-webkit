@@ -6,7 +6,7 @@ module.exports = function (grunt) {
       '${taskname}': {
         files: [{
           dot: true,
-          src: ['${'<%= paths.tmp %>'}/*', '${'<%= paths.dist %>'}/${taskname}/*']
+          src: ['${'<%= paths.dist %>'}/${taskname}/*']
         }]
       }
     },
@@ -16,13 +16,13 @@ module.exports = function (grunt) {
           {
             expand: true,
             cwd: '${'<%= paths.nwjsSource %>'}/${srcFolder}',
-            dest: '${'<%= paths.tmp %>'}/${taskname}',
+            dest: '${'<%= paths.dist %>'}/${taskname}',
             src: '**'
           },
           {
             expand: true,
             cwd: '${'<%= paths.app %>'}',
-            dest: '${'<%= paths.tmp %>'}/${taskname}/${nwExecutable}.app/Contents/Resources/app.nw',
+            dest: '${'<%= paths.dist %>'}/${taskname}/${nwExecutable}.app/Contents/Resources/app.nw',
             src: '**'
           }
         ]
@@ -31,11 +31,17 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('plist-${taskname}', 'set node webkit and app relevant information to a new plist file', function () {
-    var paths = grunt.config.get('paths');
+    var paths = grunt.config.get('paths'),
+      pkg = grunt.config.get('pkg');
     var infoPlistTmp = grunt.file.read(paths.resources + '/mac/Info.plist.tmp', {encoding: 'UTF8'}),
-      infoPlist = grunt.template.process(infoPlistTmp, {data: {nwExecutable: '${nwExecutable}'}});
+      infoPlist = grunt.template.process(infoPlistTmp, {
+        data: {
+          nwExecutable: '${nwExecutable}',
+          version: pkg.version
+        }
+      });
 
-    grunt.file.write(paths.tmp + '/${taskname}/${nwExecutable}.app/Contents/Info.plist', infoPlist, {
+    grunt.file.write(paths.dist + '/${taskname}/${nwExecutable}.app/Contents/Info.plist', infoPlist, {
       encoding: 'UTF8'
     });
   });
@@ -43,7 +49,7 @@ module.exports = function (grunt) {
   grunt.registerTask('chmod-${taskname}', 'Add lost Permissions.', function () {
     var fs = require('fs'),
       paths = grunt.config.get('paths'),
-      path = paths.tmp + '/${taskname}/${nwExecutable}.app/Contents/';
+      path = paths.dist + '/${taskname}/${nwExecutable}.app/Contents/';
 
     fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper EH.app/Contents/MacOS/${nwExecutable} Helper EH', '555');
     fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper NP.app/Contents/MacOS/${nwExecutable} Helper NP', '555');
