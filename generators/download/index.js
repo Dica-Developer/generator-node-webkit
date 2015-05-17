@@ -95,6 +95,26 @@ module.exports = yeoman.generators.Base.extend({
     }
   },
 
+  writing: {
+    app: function(){
+      var platformName = this.nwjs.platform,
+        taskname = platformName + '_' + this.nwjs.version,
+        srcFolder = this._getNwjsFolderName(),
+        nwExecutable = semver.outside(this.nwjs.version, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs';
+
+      this.fs.copyTpl(
+        this.templatePath('_index.ejs'),
+        this.destinationPath('grunt-tasks/' + taskname +'.js'),
+        {
+          'taskname': taskname,
+          'platformName': this.nwjs.platform,
+          'srcFolder': srcFolder,
+          'nwExecutable': nwExecutable
+        }
+      );
+    }
+  },
+
   configuring: function(){
     this.config.set('nwjs', this.nwjs);
     this.config.save();
