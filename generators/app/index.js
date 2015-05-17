@@ -75,15 +75,14 @@ module.exports = yeoman.generators.Base.extend({
       );
 
       this.fs.copyTpl(
-        this.templatePath('resources/mac/_Info.plist.tmp'),
+        this.templatePath('resources/_Info.plist.tmp'),
         this.destinationPath('resources/mac/Info.plist.tmp'),
-        this
+        {'appname': this.appname}
       );
 
       this.fs.copy(
-        this.templatePath('resources/mac/_icon.icns'),
-        this.destinationPath('resources/mac/icon.icns'),
-        this
+        this.templatePath('resources/mac'),
+        this.destinationPath('resources/mac')
       );
 
       this.fs.copy(
