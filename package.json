@@ -22,9 +22,6 @@
   "scripts": {
     "test": "mocha test -R mocha-lcov-reporter | coveralls"
   },
-  "files": [
-    "generators"
-  ],
   "dependencies": {
     "chalk": "^1.0.0",
     "decompress-zip": "^0.1.0",
