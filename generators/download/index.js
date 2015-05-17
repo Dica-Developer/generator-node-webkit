@@ -17,36 +17,7 @@ var NWJS_DEFAULT_VERSION = 'v0.12.0',
   };
 
 module.exports = yeoman.generators.Base.extend({
-  nwjsVersion: undefined,
-  nwjsPlatform: undefined,
-  versionAlreadySpecified: false,
-  platformAlreadySpecified: false,
-  initializing: function () {
-    this.argument('nwjsVersion', {
-      required: false,
-      type: String,
-      desc: 'The subgenerator name'
-    });
-
-    this.argument('nwjsPlatform', {
-      required: false,
-      type: String,
-      desc: 'The subgenerator name'
-    });
-
-    if (this.nwjsVersion) {
-      this.nwjsVersion = this.nwjsVersion.indexOf('v') !== 0 ? 'v' + this.nwjsVersion : this.nwjsVersion;
-      assert(semver.valid(this.nwjsVersion), this.nwjsVersion + ' is not a valid version string.');
-      this.log('You called the NodeWebkit subgenerator with the argument ' + this.nwjsVersion + '.');
-      this.versionAlreadySpecified = true;
-    }
-
-    if (this.nwjsPlatform) {
-      assert(PLATFORMS_MAP[this.nwjsPlatform], this.nwjsPlatform + ' is not a valid platform. Valid platforms are: ' + Object.keys(PLATFORMS_MAP).join(', '));
-      this.log('You called the NodeWebkit subgenerator with the argument ' + this.nwjsPlatform + '.');
-      this.platformAlreadySpecified = true;
-    }
-  },
+  nwjs: {},
 
   prompting: function () {
     var self = this,
@@ -55,12 +26,9 @@ module.exports = yeoman.generators.Base.extend({
     var prompts = [
       {
         type: 'input',
-        name: 'nwjsVersion',
+        name: 'version',
         message: 'Please specify which version of node-webkit you want to download',
         default: NWJS_DEFAULT_VERSION,
-        when: function () {
-          return !this.versionAlreadySpecified;
-        },
         validate: function (answer) {
           var done = this.async(), url;
 
@@ -87,7 +55,7 @@ module.exports = yeoman.generators.Base.extend({
       },
       {
         type: 'list',
-        name: 'nwjsPlatform',
+        name: 'platform',
         message: 'Which platform you develop on?',
         choices: Object.keys(PLATFORMS_MAP),
         default: function () {
@@ -106,20 +74,22 @@ module.exports = yeoman.generators.Base.extend({
       }];
 
     this.prompt(prompts, function (props) {
-      this.nwjsVersion = props.nwjsVersion;
-      this.nwjsPlatform = props.nwjsPlatform;
-      this.config.set('nwjsVersion', this.nwjsVersion);
-      this.config.set('nwjsPlatform', this.nwjsPlatform);
+      this.nwjs = props;
       done();
     }.bind(this));
 
   },
 
-  downloadNWJS: function(){
-    var done = this.async(),
-      url = this._getDownloadUrl();
+  downloadNWJS: function () {
+      var done = this.async(),
+        url = this._getDownloadUrl();
 
-    this.extract(url, this.destinationPath('nwjs'), done);
+      this.extract(url, this.destinationPath('nwjs'), done);
+  },
+
+  end: function(){
+    this.config.set('nwjs', this.nwjs);
+    this.config.save();
   },
 
   /**
@@ -130,8 +100,8 @@ module.exports = yeoman.generators.Base.extend({
    * @private
    */
   _getDownloadUrl: function (version, platform) {
-    version = version || this.nwjsVersion;
-    platform = platform || this.nwjsPlatform;
+    version = version || this.nwjs.version;
+    platform = platform || this.nwjs.platform;
     var namePart = '/nwjs-';
     if (semver.outside(version, 'v0.12.0', '<')) {
       namePart = '/node-webkit-';
