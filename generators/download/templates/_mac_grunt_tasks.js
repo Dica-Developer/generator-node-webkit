@@ -34,6 +34,14 @@ module.exports = function (grunt) {
           }
         ]
       }
+    },
+    rename: {
+      '${taskname}': {
+        files: [{
+          src: '${'<%= paths.dist %>'}/${taskname}/${nwExecutable}.app',
+          dest: '${'<%= paths.dist %>'}/${taskname}/${'<%= pkg.name %>'}.app'
+        }]
+      }
     }
   });
 
@@ -68,7 +76,8 @@ module.exports = function (grunt) {
     'clean:${taskname}',
     'copy:${taskname}',
     'plist-${taskname}',
-    'chmod-${taskname}'
+    'chmod-${taskname}',
+    'rename:${taskname}'
   ]);
 
 };

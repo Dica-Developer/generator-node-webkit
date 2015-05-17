@@ -14,7 +14,8 @@ module.exports = function (grunt) {
       'resources': 'resources'
     },
     clean: {},
-    copy: {}
+    copy: {},
+    rename: {}
   });
 
   grunt.loadTasks('./grunt-tasks');
