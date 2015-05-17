@@ -1,6 +1,9 @@
 module.exports = function (grunt) {
   'use strict';
 
+  var paths = grunt.config.get('paths'),
+    pkg = grunt.config.get('pkg');
+
   grunt.config.merge({
     clean: {
       '${taskname}': {
@@ -46,8 +49,6 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('plist-${taskname}', 'set node webkit and app relevant information to a new plist file', function () {
-    var paths = grunt.config.get('paths'),
-      pkg = grunt.config.get('pkg');
     var infoPlistTmp = grunt.file.read(paths.resources + '/mac/Info.plist.tmp', {encoding: 'UTF8'}),
       infoPlist = grunt.template.process(infoPlistTmp, {
         data: {
@@ -63,7 +64,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('chmod-${taskname}', 'Add lost Permissions.', function () {
     var fs = require('fs'),
-      paths = grunt.config.get('paths'),
       path = paths.dist + '/${taskname}/${nwExecutable}.app/Contents/';
 
     fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper EH.app/Contents/MacOS/${nwExecutable} Helper EH', '555');
@@ -72,12 +72,41 @@ module.exports = function (grunt) {
     fs.chmodSync(path + 'MacOS/${nwExecutable}', '555');
   });
 
-  grunt.registerTask('${taskname}', [
-    'clean:${taskname}',
-    'copy:${taskname}',
-    'plist-${taskname}',
-    'chmod-${taskname}',
-    'rename:${taskname}'
-  ]);
+  grunt.registerTask('dmg-${taskname}', 'Create dmg from previously created app folder in dist.', function () {
+    var done = this.async(),
+      createDmgCommand = 'resources/mac/package.sh "'+ pkg.name +'" "'+ paths.dist +'/${taskname}"',
+      fs = require('fs'),
+      exec = require('child_process').exec;
+
+    fs.chmodSync('resources/mac/package.sh', '555');
+    exec(createDmgCommand, function (error, stdout, stderr) {
+      var result = true;
+      if (stdout) {
+        grunt.log.write(stdout);
+      }
+      if (stderr) {
+        grunt.log.write(stderr);
+      }
+      if (error !== null) {
+        grunt.log.error(error);
+        result = false;
+      }
+      done(result);
+    });
+  });
+
+  grunt.registerTask('${taskname}', function(dmg){
+    grunt.task.run([
+      'clean:${taskname}',
+      'copy:${taskname}',
+      'plist-${taskname}',
+      'chmod-${taskname}',
+      'rename:${taskname}'
+    ]);
+
+    if(dmg){
+      grunt.task.run('dmg-${taskname}');
+    }
+  });
 
 };
