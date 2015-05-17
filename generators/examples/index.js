@@ -30,6 +30,7 @@ module.exports = yeoman.generators.Base.extend({
       this.EXAMPLES_ZIP_DESTINATION_PATH = this.destinationPath('tmp/node-webkit-examples.zip');
       this.EXAMPLES_EXTRACT_DESTINATION_PATH = this.destinationRoot();
       this.EXAMPLES_PATH = 'nw-sample-apps-master';
+      fsExtra.ensureDirSync(this.destinationPath('tmp'));
     },
     fetchExamplesList: function () {
       var done = this.async();
@@ -107,7 +108,7 @@ module.exports = yeoman.generators.Base.extend({
       unzipper = new DecompressZip('tmp/node-webkit-examples.zip'),
       log = this.log.write();
 
-    if (fs.existsSync(this.EXAMPLES_EXTRACT_DESTINATION_PATH)) {
+    if (fs.existsSync(this.EXAMPLES_EXTRACT_DESTINATION_PATH + '/' + this.EXAMPLES_PATH)) {
       log.ok('Examples already extracted. Skip to next step.');
       done();
       return;
@@ -135,7 +136,7 @@ module.exports = yeoman.generators.Base.extend({
 
     fsExtra.copy(exampleSourcePath, this.destinationPath('app'), function (error) {
       if (error) {
-        self.log.conflict(error);
+        this.log.conflict(error);
       }
       done();
     }.bind(this));
