@@ -4,7 +4,7 @@
 var yeoman = require('yeoman-generator'),
   semver = require('semver'),
   request = require('request'),
-  assert = require('assert');
+  fs = require('fs');
 
 // Locals
 var NWJS_DEFAULT_VERSION = 'v0.12.0',
@@ -82,9 +82,17 @@ module.exports = yeoman.generators.Base.extend({
 
   downloadNWJS: function () {
       var done = this.async(),
+        folderName = this._getNwjsFolderName(),
+        folderPath = this.destinationPath('nwjs/' + folderName),
         url = this._getDownloadUrl();
 
+    if(fs.existsSync(folderPath)){
+      this.log.write()
+        .ok('NWJS already downloaded. Skip to next step.');
+      done();
+    } else {
       this.extract(url, this.destinationPath('nwjs'), done);
+    }
   },
 
   end: function(){
@@ -107,5 +115,18 @@ module.exports = yeoman.generators.Base.extend({
       namePart = '/node-webkit-';
     }
     return 'http://dl.nwjs.io/' + version + namePart + version + '-' + PLATFORMS_MAP[platform];
+  },
+
+  _getNwjsFolderName: function(){
+    var version = this.nwjs.version,
+      platform = this.nwjs.platform,
+      namePart = 'nwjs-',
+      platformFileName = PLATFORMS_MAP[platform],
+      platformWithoutFileExtension = platformFileName.substring(0, platformFileName.indexOf('.'));
+
+    if (semver.outside(version, 'v0.12.0', '<')) {
+      namePart = 'node-webkit-';
+    }
+    return namePart + version + '-' + platformWithoutFileExtension;
   }
 });
