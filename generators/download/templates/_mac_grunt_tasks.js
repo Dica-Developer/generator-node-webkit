@@ -14,6 +14,9 @@ module.exports = function (grunt) {
       }
     },
     copy: {
+      options: {
+        mode: true
+      },
       '${taskname}': {
         files: [
           {
@@ -62,16 +65,6 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('chmod-${taskname}', 'Add lost Permissions.', function () {
-    var fs = require('fs'),
-      path = paths.dist + '/${taskname}/${nwExecutable}.app/Contents/';
-
-    fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper EH.app/Contents/MacOS/${nwExecutable} Helper EH', '555');
-    fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper NP.app/Contents/MacOS/${nwExecutable} Helper NP', '555');
-    fs.chmodSync(path + 'Frameworks/${nwExecutable} Helper.app/Contents/MacOS/${nwExecutable} Helper', '555');
-    fs.chmodSync(path + 'MacOS/${nwExecutable}', '555');
-  });
-
   grunt.registerTask('dmg-${taskname}', 'Create dmg from previously created app folder in dist.', function () {
     var done = this.async(),
       createDmgCommand = 'resources/mac/package.sh "'+ pkg.name +'" "'+ paths.dist +'/${taskname}"',
@@ -100,7 +93,6 @@ module.exports = function (grunt) {
       'clean:${taskname}',
       'copy:${taskname}',
       'plist-${taskname}',
-      'chmod-${taskname}',
       'rename:${taskname}'
     ]);
 
