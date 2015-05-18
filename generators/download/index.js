@@ -129,6 +129,12 @@ module.exports = yeoman.generators.Base.extend({
     this.config.save();
   },
 
+  end: function(){
+    this.log.ok('New grunt task generated.')
+      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.version)
+      .writeln('');
+  },
+
   /**
    *
    * @param [version] {String}
