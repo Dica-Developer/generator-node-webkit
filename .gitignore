@@ -4,3 +4,4 @@ node_modules/
 dist/
 test/tmp/
 test/fixtures/
+test/coverage/
