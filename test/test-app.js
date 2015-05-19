@@ -58,7 +58,7 @@ describe('node-webkit:app', function () {
         });
       });
 
-      it('should fill package json with provided information of prompt', function (done) {
+      it('should add correct values to package json', function (done) {
         gen.run(function () {
           fs.readJSON(testDirectoryPath + '/package.json', function (error, pkg) {
             if (error) {
@@ -67,6 +67,23 @@ describe('node-webkit:app', function () {
 
             expect(pkg.name).to.be.equal(defaultOptions.appname);
             expect(pkg.description).to.be.equal(defaultOptions.description);
+            done();
+          });
+
+        });
+      });
+
+
+      it('should add correct values to plist file', function (done) {
+        gen.run(function () {
+          fs.readFile(testDirectoryPath + '/resources/mac/Info.plist.tmp', {'encoding': 'utf8'}, function (error, plist) {
+            if (error) {
+              done(error);
+            }
+
+            expect(plist).to.match(/<string>TestApp<\/string>/);
+            expect(plist).to.match(/<string><%= nwExecutable %><\/string>/);
+            expect(plist).to.match(/<string><%= version %><\/string>/);
             done();
           });
 
