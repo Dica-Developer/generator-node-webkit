@@ -15,9 +15,10 @@ module.exports = function (grunt) {
           reporter: 'spec'
         }
       },
-      travis: {
+      coverage: {
         options: {
-          reporter: 'spec'
+          reporter: 'html-cov',
+          output: 'test/coverage/report.html'
         }
       },
       options: {
@@ -56,5 +57,5 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('test', ['updateFixtures', 'installFixtures', 'mochacov:local']);
-  grunt.registerTask('travis', ['updateFixtures', 'installFixtures', 'mochacov:travis']);
+  grunt.registerTask('coverage', ['updateFixtures', 'installFixtures', 'mochacov:coverage']);
 };
