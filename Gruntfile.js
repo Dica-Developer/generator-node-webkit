@@ -40,7 +40,10 @@ module.exports = function (grunt) {
 
     shell.cd('test/fixtures');
     grunt.log.ok('installing npm dependencies for generated app');
-    process.exec('npm install --quiet', {cwd: '../fixtures'}, function (error, stdout, stderr) {
+    process.exec('npm install --quiet', {cwd: '../fixtures'}, function (error) {
+      if (error) {
+        done(error);
+      }
       shell.cd('../../');
       done();
     });
