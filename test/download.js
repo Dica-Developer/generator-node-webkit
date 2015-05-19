@@ -151,7 +151,7 @@ describe('node-webkit:download', function () {
       });
     });
 
-    it('should create create correct Gruntfile', function (done) {
+    it('should create correct Gruntfile', function (done) {
       nock(nwjsBaseUrl)
         .get(packageUrlPath)
         .reply(200, {});
@@ -251,7 +251,7 @@ describe('node-webkit:download', function () {
       });
     });
 
-    it('should create create correct Gruntfile', function (done) {
+    it('should create correct Gruntfile', function (done) {
       nock(nwjsBaseUrl)
         .get(packageUrlPath)
         .reply(200, {});
