@@ -40,7 +40,9 @@
     "grunt-mocha-cov": "^0.4.0",
     "load-grunt-tasks": "^3.1.0",
     "mocha": "^2.2.5",
-    "shelljs": "^0.4.0"
+    "nock": "^2.0.1",
+    "shelljs": "^0.4.0",
+    "sinon": "^1.14.1"
   },
   "config": {
     "blanket": {
