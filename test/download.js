@@ -1,3 +1,4 @@
+/*
 'use strict';
 
 var path = require('path');
@@ -18,3 +19,4 @@ describe('NodeWebkit:generators/download', function () {
     ]);
   });
 });
+*/

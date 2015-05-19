@@ -20,7 +20,7 @@
     "url": "git://github.com/Dica-Developer/generator-node-webkit.git"
   },
   "scripts": {
-    "test": "mocha test -R mocha-lcov-reporter | coveralls"
+    "test": "grunt test"
   },
   "dependencies": {
     "chalk": "^1.0.0",
@@ -34,6 +34,22 @@
     "yosay": "^1.0.2"
   },
   "devDependencies": {
-    "mocha": "*"
+    "chai": "^2.3.0",
+    "grunt": "^0.4.5",
+    "grunt-env": "^0.4.4",
+    "grunt-mocha-cov": "^0.4.0",
+    "load-grunt-tasks": "^3.1.0",
+    "mocha": "^2.2.5",
+    "shelljs": "^0.4.0"
+  },
+  "config": {
+    "blanket": {
+      "pattern": [
+        "generators"
+      ],
+      "data-cover-never": [
+        "templates"
+      ]
+    }
   }
 }
