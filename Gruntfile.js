@@ -13,10 +13,16 @@ module.exports = function (grunt) {
       local: {
         options: {
           reporter: 'spec'
-        },
-        all: ['test/*.js']
+        }
       },
-      travis: {}
+      travis: {
+        options: {
+          reporter: 'spec'
+        }
+      },
+      options: {
+        all: ['test/*.js']
+      }
     }
   });
 
