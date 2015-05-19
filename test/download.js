@@ -64,6 +64,73 @@ describe('node-webkit:download', function () {
     restoreLog(gen)
   });
 
+  describe('package download url', function () {
+
+    describe('for version >= v0.12.0', function () {
+      var PLATFORMS_MAP = {
+          'MacOS32': 'osx-ia32.zip',
+          'MacOS64': 'osx-x64.zip',
+          'Linux32': 'linux-ia32.tar.gz',
+          'Linux64': 'linux-x64.tar.gz',
+          'Windows32': 'win-ia32.zip'
+        },
+        version = 'v0.12.0';
+
+      Object.keys(PLATFORMS_MAP).forEach(function (platform) {
+
+        it('should call "' + nwjsBaseUrl + '/' + version + '/nwjs-' + version + '-' + PLATFORMS_MAP[platform], function (done) {
+          var scope = nock(nwjsBaseUrl)
+            .get('/' + version + '/nwjs-' + version + '-' + PLATFORMS_MAP[platform])
+            .reply(200, {});
+
+          helpers.mockPrompt(gen, {
+            'version': version,
+            'platform': platform
+          });
+
+          gen.run(function () {
+            expect(scope.isDone()).to.be.true;
+            done();
+          });
+        });
+
+      });
+
+    });
+
+    describe('for version < v0.12.0', function () {
+      var PLATFORMS_MAP = {
+          'MacOS32': 'osx-ia32.zip',
+          'MacOS64': 'osx-x64.zip',
+          'Linux32': 'linux-ia32.tar.gz',
+          'Linux64': 'linux-x64.tar.gz',
+          'Windows32': 'win-ia32.zip'
+        },
+        version = 'v0.10.0';
+
+      Object.keys(PLATFORMS_MAP).forEach(function (platform) {
+
+        it('should call "' + nwjsBaseUrl + '/' + version + '/node-webkit-' + version + '-' + PLATFORMS_MAP[platform], function (done) {
+          var scope = nock(nwjsBaseUrl)
+            .get('/' + version + '/node-webkit-' + version + '-' + PLATFORMS_MAP[platform])
+            .reply(200, {});
+
+          helpers.mockPrompt(gen, {
+            'version': version,
+            'platform': platform
+          });
+
+          gen.run(function () {
+            expect(scope.isDone()).to.be.true;
+            done();
+          });
+        });
+
+      });
+
+    });
+
+  });
 
   describe('with version < v0.12.0', function () {
     var packageUrlPath = '/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz';
@@ -137,6 +204,29 @@ describe('node-webkit:download', function () {
         expect(gen.log.ok).to.have.been.calledWith('New grunt task generated.');
         expect(gen.log.info).to.have.been.calledWith('grunt Linux64_v0.10.0');
         done();
+      });
+    });
+
+    it('should skip download if extracted package folder already exists', function (done) {
+      var scope = nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .reply(200, {});
+
+      helpers.mockPrompt(gen, {
+        'version': 'v0.10.0',
+        'platform': 'Linux64'
+      });
+
+      fs.mkdirs(testDirectoryPath + '/nwjs/node-webkit-v0.10.0-linux-x64', function (error) {
+        if (error) {
+          done(error);
+        }
+
+        gen.run(function () {
+          expect(scope.isDone()).to.be.false;
+          expect(gen.log.ok).to.have.been.calledWith('NWJS already downloaded. Skip to next step.');
+          fs.remove(testDirectoryPath + '/nwjs/node-webkit-v0.10.0-linux-x64', done);
+        });
       });
     });
   });
@@ -214,6 +304,29 @@ describe('node-webkit:download', function () {
         expect(gen.log.ok).to.have.been.calledWith('New grunt task generated.');
         expect(gen.log.info).to.have.been.calledWith('grunt Linux64_v0.12.0');
         done();
+      });
+    });
+
+    it('should skip download if extracted package folder already exists', function (done) {
+      var scope = nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .reply(200, {});
+
+      helpers.mockPrompt(gen, {
+        'version': version,
+        'platform': 'Linux64'
+      });
+
+      fs.mkdirs(testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64', function (error) {
+        if (error) {
+          done(error);
+        }
+
+        gen.run(function () {
+          expect(scope.isDone()).to.be.false;
+          expect(gen.log.ok).to.have.been.calledWith('NWJS already downloaded. Skip to next step.');
+          fs.remove(testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64', done);
+        });
       });
     });
   });
