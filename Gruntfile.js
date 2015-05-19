@@ -32,7 +32,6 @@ module.exports = function (grunt) {
 
     fs.ensureDirSync(__dirname + '/test/fixtures');
 
-    // replace package name
     packageJson = grunt.template.process(packageJson, {
       appname: 'TestApp',
       description: 'Test Description'
