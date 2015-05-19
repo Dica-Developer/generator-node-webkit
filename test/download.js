@@ -1,36 +1,41 @@
 'use strict';
 
-var path = require('path');
-var assert = require('yeoman-generator').assert;
-var helpers = require('yeoman-generator').test;
-var fs = require('fs-extra');
-var expect = require('chai').expect;
-var nock = require('nock');
-var sinon = require('sinon');
+var path = require('path'),
+  assert = require('yeoman-generator').assert,
+  helpers = require('yeoman-generator').test,
+  fs = require('fs-extra'),
+  chai = require('chai'),
+  expect = chai.expect,
+  nock = require('nock'),
+  sinon = require('sinon'),
+  sinonChai = require("sinon-chai"),
 
-var logMethodNames = [
-  'write',
-  'writeln',
-  'ok',
-  'error',
-  'skip',
-  'force',
-  'create',
-  'invoke',
-  'conflict',
-  'identical',
-  'info',
-  'table'
-];
+  logMethodMap = {
+    'write': sinon.stub(),
+    'writeln': sinon.stub(),
+    'ok': sinon.stub(),
+    'error': sinon.stub(),
+    'skip': sinon.stub(),
+    'force': sinon.stub(),
+    'create': sinon.stub(),
+    'invoke': sinon.stub(),
+    'conflict': sinon.stub(),
+    'identical': sinon.stub(),
+    'info': sinon.stub(),
+    'table': sinon.stub()
+  },
+  nwjsBaseUrl = 'http://dl.nwjs.io';
+
+chai.use(sinonChai);
 
 function createLogStubs(generator) {
-  logMethodNames.forEach(function (logMethodName) {
-    generator.log[logMethodName] = sinon.stub().returns(generator.log);
+  Object.keys(logMethodMap).forEach(function (logMethodName) {
+    generator.log[logMethodName] = logMethodMap[logMethodName].returns(logMethodMap);
   });
 }
 
 function restoreLog(generator) {
-  logMethodNames.forEach(function (logMethodName) {
+  Object.keys(logMethodMap).forEach(function (logMethodName) {
     generator.log[logMethodName].reset();
   });
 }
@@ -61,10 +66,11 @@ describe('node-webkit:download', function () {
 
 
   describe('with version < v0.12.0', function () {
+    var packageUrlPath = '/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz';
 
     it('should call "node-webkit" url', function (done) {
-      var scope = nock('http://dl.nwjs.io')
-        .get('/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz')
+      var scope = nock(nwjsBaseUrl)
+        .get(packageUrlPath)
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
@@ -79,8 +85,8 @@ describe('node-webkit:download', function () {
     });
 
     it('should create create correct Gruntfile', function (done) {
-      nock('http://dl.nwjs.io')
-        .get('/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz')
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
@@ -95,8 +101,8 @@ describe('node-webkit:download', function () {
     });
 
     it('should expand archive in correct folder', function (done) {
-      nock('http://dl.nwjs.io')
-        .get('/v0.10.0/node-webkit-v0.10.0-linux-x64.tar.gz')
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
         .replyWithFile(200, __dirname + '/package_fixtures/node-webkit-v0.10.0-linux-x64.tar.gz');
 
       helpers.mockPrompt(gen, {
@@ -116,22 +122,97 @@ describe('node-webkit:download', function () {
         done();
       });
     });
+
+    it('should log that a new grunt task is created', function (done) {
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .replyWithFile(200, __dirname + '/package_fixtures/node-webkit-v0.10.0-linux-x64.tar.gz');
+
+      helpers.mockPrompt(gen, {
+        'version': 'v0.10.0',
+        'platform': 'Linux64'
+      });
+
+      gen.run(function () {
+        expect(gen.log.ok).to.have.been.calledWith('New grunt task generated.');
+        expect(gen.log.info).to.have.been.calledWith('grunt Linux64_v0.10.0');
+        done();
+      });
+    });
   });
 
   describe('with version >= v0.12.0', function () {
+    var packageUrlPath = '/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz',
+      version = 'v0.12.0';
 
     it('should call "nwjs" url', function (done) {
-      var scope = nock('http://dl.nwjs.io')
-        .get('/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz')
+      var scope = nock(nwjsBaseUrl)
+        .get(packageUrlPath)
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'version': 'v0.12.0',
+        'version': version,
         'platform': 'Linux64'
       });
 
       gen.run(function () {
         expect(scope.isDone()).to.be.true;
+        done();
+      });
+    });
+
+    it('should create create correct Gruntfile', function (done) {
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .reply(200, {});
+
+      helpers.mockPrompt(gen, {
+        'version': version,
+        'platform': 'Linux64'
+      });
+
+      gen.run(function () {
+        assert.file(testDirectoryPath + '/grunt-tasks/Linux64_v0.12.0.js');
+        done();
+      });
+    });
+
+    it('should expand archive in correct folder', function (done) {
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
+
+      helpers.mockPrompt(gen, {
+        'version': version,
+        'platform': 'Linux64'
+      });
+
+      gen.run(function () {
+        assert.file(
+          [
+            testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64/credits.html',
+            testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64/icudtl.dat',
+            testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64/libffmpegsumo.so',
+            testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64/nw',
+            testDirectoryPath + '/nwjs/nwjs-v0.12.0-linux-x64/nw.pak'
+          ]);
+        done();
+      });
+    });
+
+    it('should log that a new grunt task is created', function (done) {
+      nock(nwjsBaseUrl)
+        .get(packageUrlPath)
+        .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
+
+      helpers.mockPrompt(gen, {
+        'version': version,
+        'platform': 'Linux64'
+      });
+
+      gen.run(function () {
+        expect(gen.log.ok).to.have.been.calledWith('New grunt task generated.');
+        expect(gen.log.info).to.have.been.calledWith('grunt Linux64_v0.12.0');
         done();
       });
     });
