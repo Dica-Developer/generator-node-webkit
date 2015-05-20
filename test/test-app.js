@@ -14,7 +14,7 @@ describe('node-webkit:app', function () {
       'nwjs': false,
       'examples': false
     },
-    testDirectoryPath = path.join(__dirname, 'tmp'),
+    testDirectoryPath = path.join(__dirname, 'app.tmp'),
     testDirectory = helpers.setUpTestDirectory(testDirectoryPath),
     deps = ['../../generators/app'];
 
@@ -25,6 +25,10 @@ describe('node-webkit:app', function () {
       fs.symlinkSync(__dirname + '/fixtures/node_modules', testDirectoryPath + '/node_modules');
       done();
     });
+  });
+
+  afterEach(function (done) {
+    fs.remove(testDirectoryPath, done);
   });
 
   describe('Running app', function () {
