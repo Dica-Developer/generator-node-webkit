@@ -290,6 +290,50 @@ describe('node-webkit:download', function () {
       });
 
     });
+
+    describe.only('for windows', function () {
+
+      beforeEach(function (done) {
+
+        var appGenerator = helpers.createGenerator('node-webkit:app', appGeneratorDeps, [], {
+          'skip-install': true,
+          'skip-welcome': true
+        });
+
+        nock(nwjsBaseUrl)
+          .get('/v0.12.0/nwjs-v0.12.0-win-ia32.zip')
+          .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-win-ia32.zip');
+
+        helpers.mockPrompt(appGenerator, defaultOptions);
+        helpers.mockPrompt(gen, {
+          'version': 'v0.12.0',
+          'platform': 'Windows32'
+        });
+
+        appGenerator.run(done);
+      });
+
+      it('should create correct dist folder', function (done) {
+        gen.run(function () {
+          exec('grunt Windows32_v0.12.0', function (error, stdout) {
+            expect(error).to.be.null;
+            expect(stdout).to.match(/Done, without errors\./);
+            expect(fs.existsSync(testDirectoryPath + '/dist/Windows32_v0.12.0')).to.be.true;
+            done();
+          });
+        });
+      });
+
+      it('should create an app zip file', function (done) {
+        gen.run(function () {
+          exec('grunt Windows32_v0.12.0', function (error) {
+            expect(error).to.be.null;
+            assert.file('dist/Windows32_v0.12.0/TestApp.zip');
+            done();
+          });
+        });
+      });
+    });
   });
 
   describe('with version < v0.12.0', function () {
