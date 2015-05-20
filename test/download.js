@@ -9,6 +9,7 @@ var path = require('path'),
   nock = require('nock'),
   sinon = require('sinon'),
   sinonChai = require("sinon-chai"),
+  exec = require('child_process').exec,
 
   logMethodMap = {
     'write': sinon.stub(),
@@ -127,9 +128,86 @@ describe('node-webkit:download', function () {
         });
 
       });
+    });
+  });
 
+  //describe('package extract', function () {
+  //});
+
+  describe('grunt task', function () {
+
+    beforeEach(function (done) {
+      var defaultOptions = {
+          'appname': 'TestApp',
+          'description': 'Test Description',
+          'username': 'Test User',
+          'nwjs': false,
+          'examples': false
+        },
+        appGeneratorDeps = ['../../generators/app'],
+        appGenerator = helpers.createGenerator('node-webkit:app', appGeneratorDeps, [], {
+          'skip-install': true,
+          'skip-welcome': true
+        });
+
+      nock(nwjsBaseUrl)
+        .get('/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz')
+        .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
+
+      helpers.mockPrompt(appGenerator, defaultOptions);
+      helpers.mockPrompt(gen, {
+        'version': 'v0.12.0',
+        'platform': 'Linux64'
+      });
+
+      appGenerator.run(done);
     });
 
+    describe('for linux', function () {
+
+      it('should copy nwjs source into dist folder', function (done) {
+        gen.run(function () {
+          exec('grunt Linux64_v0.12.0', function (error) {
+            expect(error).to.be.null;
+            assert.file(
+              [
+                'dist/Linux64_v0.12.0/icudtl.dat',
+                'dist/Linux64_v0.12.0/nw',
+                'dist/Linux64_v0.12.0/nw.pak'
+              ]
+            );
+            done();
+          });
+        });
+      });
+
+      it('should copy app files into dist folder', function (done) {
+        gen.run(function () {
+          fs.ensureDirSync(testDirectoryPath + '/app');
+          fs.writeJsonFile(testDirectoryPath + '/app/shouldExist.json', {'should-exist': true}, function () {
+            exec('grunt Linux64_v0.12.0', function (error) {
+              expect(error).to.be.null;
+              assert.file([testDirectoryPath + '/dist/Linux64_v0.12.0/app.nw/shouldExist.json']);
+              done();
+            });
+          });
+        });
+      });
+
+      it('should create correct dist folder', function (done) {
+        gen.run(function () {
+          exec('grunt Linux64_v0.12.0', function (error, stdout) {
+            expect(error).to.be.null;
+            expect(stdout).to.match(/clean:Linux64_v0\.12\.0/);
+            expect(stdout).to.match(/copy:Linux64_v0\.12\.0/);
+            expect(stdout).to.match(/Done, without errors\./);
+            expect(fs.existsSync(testDirectoryPath + '/dist/Linux64_v0.12.0')).to.be.true;
+            done();
+          });
+        });
+      });
+
+    });
   });
 
   describe('with version < v0.12.0', function () {
