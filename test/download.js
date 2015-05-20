@@ -291,7 +291,7 @@ describe('node-webkit:download', function () {
 
     });
 
-    describe.only('for windows', function () {
+    describe('for windows', function () {
 
       beforeEach(function (done) {
 
