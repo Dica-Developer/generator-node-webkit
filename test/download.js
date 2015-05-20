@@ -137,34 +137,36 @@ describe('node-webkit:download', function () {
 
   describe('grunt task', function () {
 
-    beforeEach(function (done) {
-      var defaultOptions = {
-          'appname': 'TestApp',
-          'description': 'Test Description',
-          'username': 'Test User',
-          'nwjs': false,
-          'examples': false
-        },
-        appGeneratorDeps = ['../../generators/app'],
-        appGenerator = helpers.createGenerator('node-webkit:app', appGeneratorDeps, [], {
+    var defaultOptions = {
+        'appname': 'TestApp',
+        'description': 'Test Description',
+        'username': 'Test User',
+        'nwjs': false,
+        'examples': false
+      },
+      appGeneratorDeps = ['../../generators/app'];
+
+    describe('for linux', function () {
+
+      beforeEach(function (done) {
+
+        var appGenerator = helpers.createGenerator('node-webkit:app', appGeneratorDeps, [], {
           'skip-install': true,
           'skip-welcome': true
         });
 
-      nock(nwjsBaseUrl)
-        .get('/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz')
-        .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
+        nock(nwjsBaseUrl)
+          .get('/v0.12.0/nwjs-v0.12.0-linux-x64.tar.gz')
+          .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
 
-      helpers.mockPrompt(appGenerator, defaultOptions);
-      helpers.mockPrompt(gen, {
-        'version': 'v0.12.0',
-        'platform': 'Linux64'
+        helpers.mockPrompt(appGenerator, defaultOptions);
+        helpers.mockPrompt(gen, {
+          'version': 'v0.12.0',
+          'platform': 'Linux64'
+        });
+
+        appGenerator.run(done);
       });
-
-      appGenerator.run(done);
-    });
-
-    describe('for linux', function () {
 
       it('should copy nwjs source into dist folder', function (done) {
         gen.run(function () {
@@ -204,6 +206,85 @@ describe('node-webkit:download', function () {
             expect(stdout).to.match(/Done, without errors\./);
             expect(fs.existsSync(testDirectoryPath + '/dist/Linux64_v0.12.0')).to.be.true;
             done();
+          });
+        });
+      });
+
+    });
+
+    describe('for mac', function () {
+
+      beforeEach(function (done) {
+
+        var appGenerator = helpers.createGenerator('node-webkit:app', appGeneratorDeps, [], {
+          'skip-install': true,
+          'skip-welcome': true
+        });
+
+        nock(nwjsBaseUrl)
+          .get('/v0.12.0/nwjs-v0.12.0-osx-x64.zip')
+          .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-osx-x64.zip');
+
+        helpers.mockPrompt(appGenerator, defaultOptions);
+        helpers.mockPrompt(gen, {
+          'version': 'v0.12.0',
+          'platform': 'MacOS64'
+        });
+
+        appGenerator.run(done);
+      });
+
+      it('should create correct dist folder', function (done) {
+        gen.run(function () {
+          exec('grunt MacOS64_v0.12.0', function (error, stdout) {
+            expect(error).to.be.null;
+            expect(stdout).to.match(/clean:MacOS64_v0\.12\.0/);
+            expect(stdout).to.match(/copy:MacOS64_v0\.12\.0/);
+            expect(stdout).to.match(/Done, without errors\./);
+            expect(fs.existsSync(testDirectoryPath + '/dist/MacOS64_v0.12.0')).to.be.true;
+            done();
+          });
+        });
+      });
+
+      it('should copy nwjs source into dist folder', function (done) {
+        gen.run(function () {
+          exec('grunt MacOS64_v0.12.0', function (error) {
+            expect(error).to.be.null;
+            assert.file([
+              'dist/MacOS64_v0.12.0/credits.html',
+              'dist/MacOS64_v0.12.0/nwjc',
+              'dist/MacOS64_v0.12.0/TestApp.app'
+            ]);
+            done();
+          });
+        });
+      });
+
+      it('should copy app files into dist folder', function (done) {
+        gen.run(function () {
+          fs.ensureDirSync(testDirectoryPath + '/app');
+          fs.writeJsonFile(testDirectoryPath + '/app/shouldExist.json', {'should-exist': true}, function () {
+            exec('grunt MacOS64_v0.12.0', function (error) {
+              expect(error).to.be.null;
+              assert.file([testDirectoryPath + '/dist/MacOS64_v0.12.0/TestApp.app/Contents/Resources/app.nw/shouldExist.json']);
+              done();
+            });
+          });
+        });
+      });
+
+      // does only work on Mac OS
+      it.skip('should create dmg if parameter is given', function (done) {
+        this.timeout('35000');
+        gen.run(function () {
+          fs.ensureDirSync(testDirectoryPath + '/app');
+          fs.writeJsonFile(testDirectoryPath + '/app/shouldExist.json', {'should-exist': true}, function () {
+            exec('grunt MacOS64_v0.12.0:dmg', function (error) {
+              expect(error).to.be.null;
+              assert.file([testDirectoryPath + '/dist/MacOS64_v0.12.0/TestApp.dmg']);
+              done();
+            });
           });
         });
       });
