@@ -42,7 +42,7 @@ function restoreLog(generator) {
 }
 
 describe('node-webkit:download', function () {
-  var gen, testDirectoryPath = path.join(__dirname, 'donwload.tmp'),
+  var gen, testDirectoryPath = path.join(__dirname, 'download.tmp'),
     testDirectory = helpers.setUpTestDirectory(testDirectoryPath),
     deps = ['../../generators/download'];
 
