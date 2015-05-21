@@ -1,47 +1,69 @@
-# generator-node-webkit [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=master)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
+# [NWJS](https://github.com/nwjs/nw.js) generator [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=sparrow)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
+---
 
-> [Yeoman](http://yeoman.io) generator
+> Generator to easily maintain cross platform apps.     
+> The generator helps to setup a new project and package    
+> the app for different OS's and [nwjs](https://github.com/nwjs/nw.js) versions.
 
+---
 
-## Getting Started
+## Usage
+---
 
-### What is Yeoman?
+Install ```generator-node-webkit```:
 
-Trick question. It's not a thing. It's this guy:
-
-![](http://i.imgur.com/JHaAlBJ.png)
-
-Basically, he wears a top hat, lives in your computer, and waits for you to tell him what kind of application you wish to create.
-
-Not every new computer comes with a Yeoman pre-installed. He lives in the [npm](https://npmjs.org) package repository. You only have to ask for him once, then he packs up and moves into your hard drive. *Make sure you clean up, he likes new and shiny things.*
-
-```bash
-npm install -g yo
 ```
-
-### Yeoman Generators
-
-Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
-
-To install generator-node-webkit from npm, run:
-
-```bash
 npm install -g generator-node-webkit
 ```
 
-Finally, initiate the generator:
+Make a new directory, and cd into it:
 
-```bash
+```
+mkdir my-new-project && cd $_
+```
+
+Run ```yo node-webkit```:
+
+```
 yo node-webkit
 ```
 
-### Getting To Know Yeoman
+## Generators
+---
 
-Yeoman has a heart of gold. He's a person with feelings and opinions, but he's very easy to work with. If you think he's too opinionated, he can be easily convinced.
+Available generators:
 
-If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
+* App
+    * [node-webkit](#app) (aka node-webkit:app)
+* Download
+    * [node-webkit:download](#download)
+* Examples
+    * [node-webkit:examples](#examples)
+    
+### App
 
+Sets up a new nwjs app, generating all the boilerplate you need to get started.
 
-## License
+Example:
 
-MIT
+```
+yo node-webkit
+```
+
+### Download
+
+Downloads a specific nwjs version for an OS of your choice.
+Generates needed grunt task to build the final app.
+
+Example: 
+
+```
+yo node-webkit:download
+[?] Please specify which version of node-webkit you want to download: (v0.12.0)
+[?] Which platform you develop on? (Use arrow keys)
+    ❯ MacOS32
+      MacOS64
+      Linux32
+      Linux64
+      Windows32
+```
