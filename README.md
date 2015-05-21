@@ -1,4 +1,4 @@
-# [NWJS](https://github.com/nwjs/nw.js) generator [![Build Status](https://img.shields.io/travis/Dica-Developer/generator-node-webkit/sparrow.svg)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
+# [NWJS](https://github.com/nwjs/nw.js) generator [![Build Status](https://img.shields.io/travis/Dica-Developer/generator-node-webkit/sparrow.svg?style=flat-square)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
 
 > Generator to easily maintain cross platform apps. The generator helps to setup a new project and package the app for different OS's and [nwjs](https://github.com/nwjs/nw.js) versions.
 
