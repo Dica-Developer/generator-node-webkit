@@ -23,7 +23,6 @@ yo node-webkit
 ```
 
 ## Generators
----
 
 Available generators:
 
