@@ -1,12 +1,8 @@
 # [NWJS](https://github.com/nwjs/nw.js) generator [![Build Status](https://secure.travis-ci.org/Dica-Developer/generator-node-webkit.png?branch=sparrow)](https://travis-ci.org/Dica-Developer/generator-node-webkit)
----
 
 > Generator to easily maintain cross platform apps. The generator helps to setup a new project and package the app for different OS's and [nwjs](https://github.com/nwjs/nw.js) versions.
 
----
-
 ## Usage
----
 
 Install ```generator-node-webkit```:
 
