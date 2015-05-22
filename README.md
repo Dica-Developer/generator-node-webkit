@@ -46,7 +46,7 @@ yo node-webkit
 ### Download
 
 Downloads a specific nwjs version for an OS of your choice.
-Generates needed grunt task to build the final app.
+Generates needed grunt task to build the final app. You can call this generator at any time you want to have a new version nwjs. The sub generator pay attention to already downloaded nwjs source files and will skip the download.
 
 Example: 
 
@@ -59,4 +59,11 @@ yo node-webkit:download
       Linux32
       Linux64
       Windows32
+```
+Produces:
+```
+├── nwjs
+│   ├── MacOS32_v0.12.0     - The nwjs sources of this combination goes here
+├── grunt-tasks             - All costum grunt tasks will go in here
+│   ├── MacOS32_v0.12.0.js  - This is the main grunt task to build a dist for this version
 ```
