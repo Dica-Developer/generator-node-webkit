@@ -10,6 +10,7 @@
     "grunt-contrib-copy": "^0.8.0",
     "grunt-contrib-rename": "0.0.3",
     "load-grunt-tasks": "^3.1.0",
+    "semver": "^4.3.4",
     "time-grunt": "^1.2.0"
   }
 }
