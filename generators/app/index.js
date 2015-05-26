@@ -51,8 +51,8 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   compose: function () {
-    if(this.examples){
     this.composeWith('node-webkit:download');
+    if(this.examples){
       this.composeWith('node-webkit:examples');
     }
   },
