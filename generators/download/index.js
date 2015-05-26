@@ -90,12 +90,12 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   downloadNWJS: function () {
-      var done = this.async(),
-        folderName = this._getNwjsFolderName(),
-        folderPath = this.destinationPath('nwjs/' + folderName),
-        url = this._getDownloadUrl();
+    var done = this.async(),
+      folderName = this._getNwjsFolderName(),
+      folderPath = this.destinationPath('nwjs/' + folderName),
+      url = this._getDownloadUrl();
 
-    if(fs.existsSync(folderPath)){
+    if (fs.existsSync(folderPath)) {
       this.log.write()
         .ok('NWJS already downloaded. Skip to next step.');
       done();
@@ -105,14 +105,14 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   writing: {
-    app: function(){
+    app: function () {
       var platformName = this.nwjs.platform,
         taskname = platformName + '_' + this.nwjs.version,
         srcFolder = this._getNwjsFolderName(),
         nwExecutable = semver.outside(this.nwjs.version, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
         templateFile;
 
-      if(this.nwjs.platform.indexOf('Linux') > -1){
+      if (this.nwjs.platform.indexOf('Linux') > -1) {
         templateFile = '_linux_grunt_tasks.js'
       } else if (this.nwjs.platform.indexOf('Windows') > -1) {
         templateFile = '_win_grunt_tasks.js'
@@ -122,7 +122,7 @@ module.exports = yeoman.generators.Base.extend({
 
       this.fs.copyTpl(
         this.templatePath(templateFile),
-        this.destinationPath('grunt-tasks/' + taskname +'.js'),
+        this.destinationPath('grunt-tasks/' + taskname + '.js'),
         {
           'taskname': taskname,
           'platformName': this.nwjs.platform,
@@ -133,12 +133,12 @@ module.exports = yeoman.generators.Base.extend({
     }
   },
 
-  configuring: function(){
+  configuring: function () {
     this.config.set('nwjs', this.nwjs);
     this.config.save();
   },
 
-  end: function(){
+  end: function () {
     this.log.ok('New grunt task generated.')
       .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.version)
       .writeln('');
@@ -161,7 +161,7 @@ module.exports = yeoman.generators.Base.extend({
     return 'http://dl.nwjs.io/' + version + namePart + version + '-' + PLATFORMS_MAP[platform];
   },
 
-  _getNwjsFolderName: function(){
+  _getNwjsFolderName: function () {
     var version = this.nwjs.version,
       platform = this.nwjs.platform,
       namePart = 'nwjs-',
