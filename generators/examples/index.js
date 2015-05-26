@@ -6,6 +6,29 @@ var request = require('request');
 var fs = require('fs');
 var fsExtra = require('fs-extra');
 var url = require('url');
+var inquirer = require('inquirer');
+require('chalk');
+
+var progressMessage = [
+  '[' + '='.red + '---------]',
+  '[-' + '='.red + '--------]',
+  '[--' + '='.red + '-------]',
+  '[---' + '='.red + '------]',
+  '[----' + '='.red + '-----]',
+  '[-----' + '='.red + '----]',
+  '[------' + '='.red + '---]',
+  '[-------' + '='.red + '--]',
+  '[--------' + '='.red + '-]',
+  '[---------' + '='.red + ']',
+  '[--------' + '='.red + '-]',
+  '[-------' + '='.red + '--]',
+  '[------' + '='.red + '---]',
+  '[-----' + '='.red + '----]',
+  '[----' + '='.red + '-----]',
+  '[---' + '='.red + '------]',
+  '[--' + '='.red + '-------]',
+  '[-' + '='.red + '--------]'
+];
 
 var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
 var githubOptions = {
@@ -82,9 +105,8 @@ module.exports = yeoman.generators.Base.extend({
       return;
     }
 
-    log.info('... Fetching %s ...', EXAMPLE_DOWNLOAD_URL)
-      .info('This might take a few moments');
-
+    var dowloadCount = 18;
+    var ui = new inquirer.ui.BottomBar();
     var writeStream = fs.createWriteStream(this.EXAMPLES_ZIP_DESTINATION_PATH);
     request
       .get(EXAMPLE_DOWNLOAD_URL)
@@ -92,12 +114,13 @@ module.exports = yeoman.generators.Base.extend({
         self.log.conflict(err);
       })
       .on('data', function () {
-        log.write('.');
+        ui.updateBottomBar(progressMessage[dowloadCount++ % 18] + ' Fetching ' + EXAMPLE_DOWNLOAD_URL);
       })
       .pipe(writeStream);
 
 
     writeStream.on('finish', function () {
+      ui.updateBottomBar('').close();
       log.write().ok('Done in ' + self.EXAMPLES_ZIP_DESTINATION_PATH).write();
       done();
     });
@@ -114,14 +137,20 @@ module.exports = yeoman.generators.Base.extend({
       return;
     }
 
-    log.info('... Unzipping examples in %s ...', this.EXAMPLES_EXTRACT_DESTINATION_PATH);
+    var dowloadCount = 18;
+    var ui = new inquirer.ui.BottomBar();
+    unzipper.on('data', function () {
+      ui.updateBottomBar(progressMessage[dowloadCount++ % 18] + ' Unzipping ' + this.EXAMPLES_EXTRACT_DESTINATION_PATH);
+    });
 
     unzipper.on('error', function (error) {
       this.log.conflict('Error while unzipping "tmp/node-webkit-examples.zip"', error);
+      ui.updateBottomBar('').close();
     }.bind(this));
 
     unzipper.on('extract', function () {
       log.write().ok('Done unzipping examples.').write();
+      ui.updateBottomBar('').close();
       done();
     }.bind(this));
 
