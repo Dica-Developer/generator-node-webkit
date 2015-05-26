@@ -59,12 +59,21 @@ module.exports = yeoman.generators.Base.extend({
         message: 'Which platform you develop on?',
         choices: Object.keys(PLATFORMS_MAP),
         default: function () {
+          var is64bit = process.arch === 'x64';
           if ('darwin' === process.platform) {
-            return 0;
+            if (is64bit) {
+              return 1;
+            } else {
+              return 0;
+            }
           }
 
           if ('linux' === process.platform) {
-            return 2;
+            if (is64bit) {
+              return 3;
+            } else {
+              return 2;
+            }
           }
 
           if ('win32' === process.platform) {
