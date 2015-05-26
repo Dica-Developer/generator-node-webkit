@@ -11,12 +11,11 @@ describe('node-webkit:app', function () {
       'appname': 'TestApp',
       'description': 'Test Description',
       'username': 'Test User',
-      'nwjs': false,
       'examples': false
     },
     testDirectoryPath = path.join(__dirname, 'app.tmp'),
     testDirectory = helpers.setUpTestDirectory(testDirectoryPath),
-    deps = ['../../generators/app'];
+    deps = ['../../generators/app', [helpers.createDummyGenerator(), 'node-webkit:download']];
 
   beforeEach(function (done) {
     testDirectory(function () {

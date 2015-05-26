@@ -144,7 +144,7 @@ describe('node-webkit:download', function () {
         'nwjs': false,
         'examples': false
       },
-      appGeneratorDeps = ['../../generators/app'];
+      appGeneratorDeps = ['../../generators/app', [helpers.createDummyGenerator(), 'node-webkit:download']];
 
     describe('for linux', function () {
 

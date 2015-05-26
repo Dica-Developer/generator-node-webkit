@@ -12,12 +12,11 @@ describe('grunt task', function () {
       'appname': 'TestApp',
       'description': 'Test Description',
       'username': 'Test User',
-      'nwjs': false,
       'examples': false
     },
     testDirectoryPath = path.join(__dirname, 'grunt.tmp'),
     testDirectory = helpers.setUpTestDirectory(testDirectoryPath),
-    deps = ['../../generators/app'];
+    deps = ['../../generators/app', [helpers.createDummyGenerator(), 'node-webkit:download']];
 
   beforeEach(function (done) {
     testDirectory(function () {

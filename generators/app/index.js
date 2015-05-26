@@ -35,12 +35,6 @@ module.exports = yeoman.generators.Base.extend({
       },
       {
         type: 'confirm',
-        name: 'nwjs',
-        message: 'Do you want to download node-webkit?',
-        default: true
-      },
-      {
-        type: 'confirm',
         name: 'examples',
         message: 'Do you want to install one of the node-webkit examples?',
         default: false
@@ -52,17 +46,13 @@ module.exports = yeoman.generators.Base.extend({
       this.description = props.description;
       this.username = props.username;
       this.examples = props.examples;
-      this.nwjs = props.nwjs;
       done();
     }.bind(this));
   },
 
   compose: function () {
-    if(this.nwjs){
-      this.composeWith('node-webkit:download');
-    }
-
     if(this.examples){
+    this.composeWith('node-webkit:download');
       this.composeWith('node-webkit:examples');
     }
   },
