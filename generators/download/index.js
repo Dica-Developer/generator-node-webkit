@@ -6,7 +6,7 @@ var yeoman = require('yeoman-generator'),
   request = require('request'),
   fs = require('fs');
 
-// Locals
+// Local
 var NWJS_DEFAULT_VERSION = 'v0.12.0',
   PLATFORMS_MAP = {
     'MacOS32': 'osx-ia32.zip',

@@ -1,39 +1,42 @@
 'use strict';
-var yeoman = require('yeoman-generator');
-var GitHubApi = require('github');
-var DecompressZip = require('decompress-zip');
-var request = require('request');
-var fs = require('fs');
-var fsExtra = require('fs-extra');
-var url = require('url');
-var inquirer = require('inquirer');
+
+//  Dependencies
+var yeoman = require('yeoman-generator'),
+  GitHubApi = require('github'),
+  DecompressZip = require('decompress-zip'),
+  request = require('request'),
+  fs = require('fs'),
+  fsExtra = require('fs-extra'),
+  url = require('url'),
+  inquirer = require('inquirer');
+
 require('chalk');
 
+// Local
 var progressMessage = [
-  '[' + '='.red + '---------]',
-  '[-' + '='.red + '--------]',
-  '[--' + '='.red + '-------]',
-  '[---' + '='.red + '------]',
-  '[----' + '='.red + '-----]',
-  '[-----' + '='.red + '----]',
-  '[------' + '='.red + '---]',
-  '[-------' + '='.red + '--]',
-  '[--------' + '='.red + '-]',
-  '[---------' + '='.red + ']',
-  '[--------' + '='.red + '-]',
-  '[-------' + '='.red + '--]',
-  '[------' + '='.red + '---]',
-  '[-----' + '='.red + '----]',
-  '[----' + '='.red + '-----]',
-  '[---' + '='.red + '------]',
-  '[--' + '='.red + '-------]',
-  '[-' + '='.red + '--------]'
-];
-
-var proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null;
-var githubOptions = {
-  version: '3.0.0'
-};
+    '[' + '='.red + '---------]',
+    '[-' + '='.red + '--------]',
+    '[--' + '='.red + '-------]',
+    '[---' + '='.red + '------]',
+    '[----' + '='.red + '-----]',
+    '[-----' + '='.red + '----]',
+    '[------' + '='.red + '---]',
+    '[-------' + '='.red + '--]',
+    '[--------' + '='.red + '-]',
+    '[---------' + '='.red + ']',
+    '[--------' + '='.red + '-]',
+    '[-------' + '='.red + '--]',
+    '[------' + '='.red + '---]',
+    '[-----' + '='.red + '----]',
+    '[----' + '='.red + '-----]',
+    '[---' + '='.red + '------]',
+    '[--' + '='.red + '-------]',
+    '[-' + '='.red + '--------]'
+  ],
+  proxy = process.env.http_proxy || process.env.HTTP_PROXY || process.env.https_proxy || process.env.HTTPS_PROXY || null,
+  githubOptions = {
+    version: '3.0.0'
+  };
 
 if (proxy) {
   githubOptions.proxy = {};
@@ -56,19 +59,17 @@ module.exports = yeoman.generators.Base.extend({
       fsExtra.ensureDirSync(this.destinationPath('tmp'));
     },
     fetchExamplesList: function () {
-      var done = this.async();
-
-      var exampleListReducer = function (exampleList, treeEntry) {
-        if ('tree' === treeEntry.type) {
-          exampleList.push(treeEntry.path);
-        }
-        return exampleList;
-      };
-
-      var githubCallback = function (err, resp) {
-        this.exampleList = resp.tree.reduce(exampleListReducer, []);
-        done();
-      };
+      var done = this.async(),
+        exampleListReducer = function (exampleList, treeEntry) {
+          if ('tree' === treeEntry.type) {
+            exampleList.push(treeEntry.path);
+          }
+          return exampleList;
+        },
+        githubCallback = function (err, resp) {
+          this.exampleList = resp.tree.reduce(exampleListReducer, []);
+          done();
+        };
 
       github.gitdata.getTree({
         'user': 'zcbenz',
@@ -78,15 +79,14 @@ module.exports = yeoman.generators.Base.extend({
     }
   },
   prompting: function () {
-    var done = this.async();
-
-    var prompts = [{
-      type: 'list',
-      name: 'exampleName',
-      message: 'Which example do you want to install?',
-      choices: this.exampleList,
-      save: true
-    }];
+    var done = this.async(),
+      prompts = [{
+        type: 'list',
+        name: 'exampleName',
+        message: 'Which example do you want to install?',
+        choices: this.exampleList,
+        save: true
+      }];
 
     this.prompt(prompts, function (props) {
       this.exampleName = props.exampleName;
@@ -97,7 +97,8 @@ module.exports = yeoman.generators.Base.extend({
   download: function () {
     var self = this,
       done = this.async(),
-      log = this.log.write();
+      log = this.log.write(),
+      dowloadCount, bottomBar, writeStream;
 
     if (fs.existsSync(this.EXAMPLES_ZIP_DESTINATION_PATH)) {
       log.ok('Examples already downloaded. Skip to next step.');
@@ -105,22 +106,26 @@ module.exports = yeoman.generators.Base.extend({
       return;
     }
 
-    var dowloadCount = 18;
-    var ui = new inquirer.ui.BottomBar();
-    var writeStream = fs.createWriteStream(this.EXAMPLES_ZIP_DESTINATION_PATH);
+    dowloadCount = 18;
+    bottomBar = new inquirer.ui.BottomBar();
+    writeStream = fs.createWriteStream(this.EXAMPLES_ZIP_DESTINATION_PATH);
+
     request
       .get(EXAMPLE_DOWNLOAD_URL)
       .on('error', function (err) {
         self.log.conflict(err);
       })
       .on('data', function () {
-        ui.updateBottomBar(progressMessage[dowloadCount++ % 18] + ' Fetching ' + EXAMPLE_DOWNLOAD_URL);
+        var currentProgressIndex = (dowloadCount++ % 18),
+          currentProgressMessage = progressMessage[currentProgressIndex];
+
+        bottomBar.updateBottomBar(currentProgressMessage + ' Fetching ' + EXAMPLE_DOWNLOAD_URL);
       })
       .pipe(writeStream);
 
 
     writeStream.on('finish', function () {
-      ui.updateBottomBar('').close();
+      bottomBar.updateBottomBar('').close();
       log.write().ok('Done in ' + self.EXAMPLES_ZIP_DESTINATION_PATH).write();
       done();
     });
@@ -129,7 +134,8 @@ module.exports = yeoman.generators.Base.extend({
   unzip: function () {
     var done = this.async(),
       unzipper = new DecompressZip('tmp/node-webkit-examples.zip'),
-      log = this.log.write();
+      log = this.log.write(),
+      dowloadCount, bottomBar;
 
     if (fs.existsSync(this.EXAMPLES_EXTRACT_DESTINATION_PATH + '/' + this.EXAMPLES_PATH)) {
       log.ok('Examples already extracted. Skip to next step.');
@@ -137,20 +143,24 @@ module.exports = yeoman.generators.Base.extend({
       return;
     }
 
-    var dowloadCount = 18;
-    var ui = new inquirer.ui.BottomBar();
+    dowloadCount = 18;
+    bottomBar = new inquirer.ui.BottomBar();
+
     unzipper.on('data', function () {
-      ui.updateBottomBar(progressMessage[dowloadCount++ % 18] + ' Unzipping ' + this.EXAMPLES_EXTRACT_DESTINATION_PATH);
+      var currentProgressIndex = (dowloadCount++ % 18),
+        currentProgressMessage = progressMessage[currentProgressIndex];
+
+      bottomBar.updateBottomBar(currentProgressMessage + ' Unzipping ' + this.EXAMPLES_EXTRACT_DESTINATION_PATH);
     });
 
     unzipper.on('error', function (error) {
       this.log.conflict('Error while unzipping "tmp/node-webkit-examples.zip"', error);
-      ui.updateBottomBar('').close();
+      bottomBar.updateBottomBar('').close();
     }.bind(this));
 
     unzipper.on('extract', function () {
+      bottomBar.updateBottomBar('').close();
       log.write().ok('Done unzipping examples.').write();
-      ui.updateBottomBar('').close();
       done();
     }.bind(this));
 
