@@ -8,7 +8,8 @@ var yeoman = require('yeoman-generator'),
   fs = require('fs'),
   fsExtra = require('fs-extra'),
   url = require('url'),
-  inquirer = require('inquirer');
+  inquirer = require('inquirer'),
+  optionOrPrompt = require('yeoman-option-or-prompt');
 
 require('chalk');
 
@@ -51,6 +52,9 @@ module.exports = yeoman.generators.Base.extend({
   exampleList: [],
   EXAMPLES_ZIP_DESTINATION_PATH: '',
   EXAMPLES_EXTRACT_DESTINATION_PATH: '',
+
+  _optionOrPrompt: optionOrPrompt,
+
   initializing: {
     setup: function () {
       this.EXAMPLES_ZIP_DESTINATION_PATH = this.destinationPath('tmp/node-webkit-examples.zip');
@@ -88,7 +92,7 @@ module.exports = yeoman.generators.Base.extend({
         save: true
       }];
 
-    this.prompt(prompts, function (props) {
+    this._optionOrPrompt(prompts, function (props) {
       this.exampleName = props.exampleName;
       done();
     }.bind(this));
