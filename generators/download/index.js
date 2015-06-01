@@ -29,7 +29,7 @@ module.exports = yeoman.generators.Base.extend({
     var prompts = [
       {
         type: 'input',
-        name: 'downloadversion',
+        name: 'versionToDownload',
         message: 'Please specify which version of node-webkit you want to download',
         default: NWJS_DEFAULT_VERSION,
         validate: function (answer) {
@@ -110,9 +110,9 @@ module.exports = yeoman.generators.Base.extend({
   writing: {
     app: function () {
       var platformName = this.nwjs.platform,
-        taskname = platformName + '_' + this.nwjs.downloadversion,
+        taskname = platformName + '_' + this.nwjs.versionToDownload,
         srcFolder = this._getNwjsFolderName(),
-        nwExecutable = semver.outside(this.nwjs.downloadversion, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
+        nwExecutable = semver.outside(this.nwjs.versionToDownload, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
         templateFile;
 
       if (this.nwjs.platform.indexOf('Linux') > -1) {
@@ -143,7 +143,7 @@ module.exports = yeoman.generators.Base.extend({
 
   end: function () {
     this.log.ok('New grunt task generated.')
-      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.downloadversion)
+      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.versionToDownload)
       .writeln('');
   },
 
@@ -155,7 +155,7 @@ module.exports = yeoman.generators.Base.extend({
    * @private
    */
   _getDownloadUrl: function (version, platform) {
-    version = version || this.nwjs.downloadversion;
+    version = version || this.nwjs.versionToDownload;
     platform = platform || this.nwjs.platform;
     var namePart = '/nwjs-';
     if (semver.outside(version, 'v0.12.0', '<')) {
@@ -165,7 +165,7 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   _getNwjsFolderName: function () {
-    var version = this.nwjs.downloadversion,
+    var version = this.nwjs.versionToDownload,
       platform = this.nwjs.platform,
       namePart = 'nwjs-',
       platformFileName = PLATFORMS_MAP[platform],
