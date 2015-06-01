@@ -3,8 +3,12 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var _ = require('lodash');
+var optionOrPrompt = require('yeoman-option-or-prompt');
 
 module.exports = yeoman.generators.Base.extend({
+
+  _optionOrPrompt: optionOrPrompt,
+
   prompting: function () {
     var done = this.async();
     if(!this.options['skip-welcome']){
@@ -41,7 +45,7 @@ module.exports = yeoman.generators.Base.extend({
       }
     ];
 
-    this.prompt(prompts, function (props) {
+    this._optionOrPrompt(prompts, function (props) {
       this.appname = props.appname;
       this.description = props.description;
       this.username = props.username;
@@ -51,9 +55,9 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   compose: function () {
-    this.composeWith('node-webkit:download');
+    this.composeWith('node-webkit:download', { options: this.options });
     if(this.examples){
-      this.composeWith('node-webkit:examples');
+      this.composeWith('node-webkit:examples', { options: this.options });
     }
   },
 

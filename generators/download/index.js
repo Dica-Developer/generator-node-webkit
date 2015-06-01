@@ -4,7 +4,8 @@
 var yeoman = require('yeoman-generator'),
   semver = require('semver'),
   request = require('request'),
-  fs = require('fs');
+  fs = require('fs'),
+  optionOrPrompt = require('yeoman-option-or-prompt');
 
 // Local
 var NWJS_DEFAULT_VERSION = 'v0.12.0',
@@ -19,6 +20,8 @@ var NWJS_DEFAULT_VERSION = 'v0.12.0',
 module.exports = yeoman.generators.Base.extend({
   nwjs: {},
 
+  _optionOrPrompt: optionOrPrompt,
+
   prompting: function () {
     var self = this,
       done = this.async();
@@ -26,7 +29,7 @@ module.exports = yeoman.generators.Base.extend({
     var prompts = [
       {
         type: 'input',
-        name: 'version',
+        name: 'nwjsVersion',
         message: 'Please specify which version of node-webkit you want to download',
         default: NWJS_DEFAULT_VERSION,
         validate: function (answer) {
@@ -82,7 +85,7 @@ module.exports = yeoman.generators.Base.extend({
         }
       }];
 
-    this.prompt(prompts, function (props) {
+    this._optionOrPrompt(prompts, function (props) {
       this.nwjs = props;
       done();
     }.bind(this));
@@ -107,9 +110,9 @@ module.exports = yeoman.generators.Base.extend({
   writing: {
     app: function () {
       var platformName = this.nwjs.platform,
-        taskname = platformName + '_' + this.nwjs.version,
+        taskname = platformName + '_' + this.nwjs.nwjsVersion,
         srcFolder = this._getNwjsFolderName(),
-        nwExecutable = semver.outside(this.nwjs.version, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
+        nwExecutable = semver.outside(this.nwjs.nwjsVersion, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
         templateFile;
 
       if (this.nwjs.platform.indexOf('Linux') > -1) {
@@ -140,7 +143,7 @@ module.exports = yeoman.generators.Base.extend({
 
   end: function () {
     this.log.ok('New grunt task generated.')
-      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.version)
+      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.nwjsVersion)
       .writeln('');
   },
 
@@ -152,7 +155,7 @@ module.exports = yeoman.generators.Base.extend({
    * @private
    */
   _getDownloadUrl: function (version, platform) {
-    version = version || this.nwjs.version;
+    version = version || this.nwjs.nwjsVersion;
     platform = platform || this.nwjs.platform;
     var namePart = '/nwjs-';
     if (semver.outside(version, 'v0.12.0', '<')) {
@@ -162,7 +165,7 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   _getNwjsFolderName: function () {
-    var version = this.nwjs.version,
+    var version = this.nwjs.nwjsVersion,
       platform = this.nwjs.platform,
       namePart = 'nwjs-',
       platformFileName = PLATFORMS_MAP[platform],

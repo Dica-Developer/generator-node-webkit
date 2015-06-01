@@ -32,6 +32,7 @@
     "request": "^2.55.0",
     "semver": "^4.3.4",
     "yeoman-generator": "^0.19.0",
+    "yeoman-option-or-prompt": "^1.0.0",
     "yosay": "^1.0.2"
   },
   "devDependencies": {
