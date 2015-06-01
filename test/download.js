@@ -86,7 +86,7 @@ describe('node-webkit:download', function () {
             .reply(200, {});
 
           helpers.mockPrompt(gen, {
-            'versionToDownload': version,
+            'nwjsVersion': version,
             'platform': platform
           });
 
@@ -118,7 +118,7 @@ describe('node-webkit:download', function () {
             .reply(200, {});
 
           helpers.mockPrompt(gen, {
-            'versionToDownload': version,
+            'nwjsVersion': version,
             'platform': platform
           });
 
@@ -161,7 +161,7 @@ describe('node-webkit:download', function () {
 
         helpers.mockPrompt(appGenerator, defaultOptions);
         helpers.mockPrompt(gen, {
-          'versionToDownload': 'v0.12.0',
+          'nwjsVersion': 'v0.12.0',
           'platform': 'Linux64'
         });
 
@@ -227,7 +227,7 @@ describe('node-webkit:download', function () {
 
         helpers.mockPrompt(appGenerator, defaultOptions);
         helpers.mockPrompt(gen, {
-          'versionToDownload': 'v0.12.0',
+          'nwjsVersion': 'v0.12.0',
           'platform': 'MacOS64'
         });
 
@@ -306,7 +306,7 @@ describe('node-webkit:download', function () {
 
         helpers.mockPrompt(appGenerator, defaultOptions);
         helpers.mockPrompt(gen, {
-          'versionToDownload': 'v0.12.0',
+          'nwjsVersion': 'v0.12.0',
           'platform': 'Windows32'
         });
 
@@ -345,7 +345,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': 'v0.10.0',
+        'nwjsVersion': 'v0.10.0',
         'platform': 'Linux64'
       });
 
@@ -361,7 +361,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': 'v0.10.0',
+        'nwjsVersion': 'v0.10.0',
         'platform': 'Linux64'
       });
 
@@ -377,7 +377,7 @@ describe('node-webkit:download', function () {
         .replyWithFile(200, __dirname + '/package_fixtures/node-webkit-v0.10.0-linux-x64.tar.gz');
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': 'v0.10.0',
+        'nwjsVersion': 'v0.10.0',
         'platform': 'Linux64'
       });
 
@@ -400,7 +400,7 @@ describe('node-webkit:download', function () {
         .replyWithFile(200, __dirname + '/package_fixtures/node-webkit-v0.10.0-linux-x64.tar.gz');
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': 'v0.10.0',
+        'nwjsVersion': 'v0.10.0',
         'platform': 'Linux64'
       });
 
@@ -417,7 +417,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': 'v0.10.0',
+        'nwjsVersion': 'v0.10.0',
         'platform': 'Linux64'
       });
 
@@ -445,7 +445,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': version,
+        'nwjsVersion': version,
         'platform': 'Linux64'
       });
 
@@ -461,7 +461,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': version,
+        'nwjsVersion': version,
         'platform': 'Linux64'
       });
 
@@ -477,7 +477,7 @@ describe('node-webkit:download', function () {
         .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': version,
+        'nwjsVersion': version,
         'platform': 'Linux64'
       });
 
@@ -500,7 +500,7 @@ describe('node-webkit:download', function () {
         .replyWithFile(200, __dirname + '/package_fixtures/nwjs-v0.12.0-linux-x64.tar.gz');
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': version,
+        'nwjsVersion': version,
         'platform': 'Linux64'
       });
 
@@ -517,7 +517,7 @@ describe('node-webkit:download', function () {
         .reply(200, {});
 
       helpers.mockPrompt(gen, {
-        'versionToDownload': version,
+        'nwjsVersion': version,
         'platform': 'Linux64'
       });
 
