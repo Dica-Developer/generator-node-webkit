@@ -8,8 +8,7 @@ var yeoman = require('yeoman-generator'),
   optionOrPrompt = require('yeoman-option-or-prompt');
 
 // Local
-var NWJS_DEFAULT_VERSION = 'v0.12.0',
-  PLATFORMS_MAP = {
+var PLATFORMS_MAP = {
     'MacOS32': 'osx-ia32.zip',
     'MacOS64': 'osx-x64.zip',
     'Linux32': 'linux-ia32.tar.gz',
@@ -31,7 +30,6 @@ module.exports = yeoman.generators.Base.extend({
         type: 'input',
         name: 'nwjsVersion',
         message: 'Please specify which version of node-webkit you want to download',
-        default: NWJS_DEFAULT_VERSION,
         validate: function (answer) {
           var done = this.async(), url;
 
@@ -54,39 +52,26 @@ module.exports = yeoman.generators.Base.extend({
               done('No download url found for version "' + answer + '" (' + url + ')!');
             }
           });
-        }
+        },
+        default: this.options.defaults.nwjsVersion,
+        when: function () {
+          return !this.options.acceptDefaults;
+        }.bind(this)
       },
       {
         type: 'list',
         name: 'platform',
         message: 'Which platform you develop on?',
         choices: Object.keys(PLATFORMS_MAP),
-        default: function () {
-          var is64bit = process.arch === 'x64';
-          if ('darwin' === process.platform) {
-            if (is64bit) {
-              return 1;
-            } else {
-              return 0;
-            }
-          }
-
-          if ('linux' === process.platform) {
-            if (is64bit) {
-              return 3;
-            } else {
-              return 2;
-            }
-          }
-
-          if ('win32' === process.platform) {
-            return 4;
-          }
-        }
+        default: this.options.defaults.platform,
+        when: function () {
+          return !this.options.acceptDefaults;
+        }.bind(this)
       }];
 
     this._optionOrPrompt(prompts, function (props) {
-      this.nwjs = props;
+      this.nwjsVersion = props.nwjsVersion || this.options.defaults.nwjsVersion;
+      this.platform = props.platform || this.options.defaults.platform;
       done();
     }.bind(this));
 
@@ -109,15 +94,15 @@ module.exports = yeoman.generators.Base.extend({
 
   writing: {
     app: function () {
-      var platformName = this.nwjs.platform,
-        taskname = platformName + '_' + this.nwjs.nwjsVersion,
+      var platformName = this.platform,
+        taskname = platformName + '_' + this.nwjsVersion,
         srcFolder = this._getNwjsFolderName(),
-        nwExecutable = semver.outside(this.nwjs.nwjsVersion, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
+        nwExecutable = semver.outside(this.nwjsVersion, 'v0.12.0', '<') ? 'node-webkit' : 'nwjs',
         templateFile;
 
-      if (this.nwjs.platform.indexOf('Linux') > -1) {
+      if (platformName.indexOf('Linux') > -1) {
         templateFile = '_linux_grunt_tasks.js'
-      } else if (this.nwjs.platform.indexOf('Windows') > -1) {
+      } else if (platformName.indexOf('Windows') > -1) {
         templateFile = '_win_grunt_tasks.js'
       } else {
         templateFile = '_mac_grunt_tasks.js'
@@ -128,7 +113,7 @@ module.exports = yeoman.generators.Base.extend({
         this.destinationPath('grunt-tasks/' + taskname + '.js'),
         {
           'taskname': taskname,
-          'platformName': this.nwjs.platform,
+          'platformName': platformName,
           'srcFolder': srcFolder,
           'nwExecutable': nwExecutable
         }
@@ -137,13 +122,13 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   configuring: function () {
-    this.config.set('nwjs', this.nwjs);
+    this.config.set('nwjs', { platform: this.platform, nwjsVersion: this.nwjsVersion});
     this.config.save();
   },
 
   end: function () {
     this.log.ok('New grunt task generated.')
-      .info('grunt ' + this.nwjs.platform + '_' + this.nwjs.nwjsVersion)
+      .info('grunt ' + this.platform + '_' + this.nwjsVersion)
       .writeln('');
   },
 
@@ -155,8 +140,8 @@ module.exports = yeoman.generators.Base.extend({
    * @private
    */
   _getDownloadUrl: function (version, platform) {
-    version = version || this.nwjs.nwjsVersion;
-    platform = platform || this.nwjs.platform;
+    version = version || this.nwjsVersion;
+    platform = platform || this.platform;
     var namePart = '/nwjs-';
     if (semver.outside(version, 'v0.12.0', '<')) {
       namePart = '/node-webkit-';
@@ -165,8 +150,8 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   _getNwjsFolderName: function () {
-    var version = this.nwjs.nwjsVersion,
-      platform = this.nwjs.platform,
+    var version = this.nwjsVersion,
+      platform = this.platform,
       namePart = 'nwjs-',
       platformFileName = PLATFORMS_MAP[platform],
       platformWithoutFileExtension = platformFileName.substring(0, platformFileName.indexOf('.'));

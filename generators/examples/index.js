@@ -72,6 +72,7 @@ module.exports = yeoman.generators.Base.extend({
         },
         githubCallback = function (err, resp) {
           this.exampleList = resp.tree.reduce(exampleListReducer, []);
+          this.exampleList.push('Continue without an example')
           done();
         };
 
@@ -89,11 +90,15 @@ module.exports = yeoman.generators.Base.extend({
         name: 'exampleName',
         message: 'Which example do you want to install?',
         choices: this.exampleList,
-        save: true
+        save: true,
+        default: this.options.defaults.exampleName,
+        when: function () {
+          return !this.options.acceptDefaults;
+        }.bind(this)
       }];
 
     this._optionOrPrompt(prompts, function (props) {
-      this.exampleName = props.exampleName;
+      this.exampleName = props.exampleName || this.options.defaults.exampleName;
       done();
     }.bind(this));
   },
@@ -104,35 +109,39 @@ module.exports = yeoman.generators.Base.extend({
       log = this.log.write(),
       dowloadCount, bottomBar, writeStream;
 
-    if (fs.existsSync(this.EXAMPLES_ZIP_DESTINATION_PATH)) {
-      log.ok('Examples already downloaded. Skip to next step.');
+    if (this.exampleName !== 'Continue without an example') {
+      if (fs.existsSync(this.EXAMPLES_ZIP_DESTINATION_PATH)) {
+        log.ok('Examples already downloaded. Skip to next step.');
+        done();
+        return;
+      }
+
+      dowloadCount = 18;
+      bottomBar = new inquirer.ui.BottomBar();
+      writeStream = fs.createWriteStream(this.EXAMPLES_ZIP_DESTINATION_PATH);
+
+      request
+        .get(EXAMPLE_DOWNLOAD_URL)
+        .on('error', function (err) {
+          self.log.conflict(err);
+        })
+        .on('data', function () {
+          var currentProgressIndex = (dowloadCount++ % 18),
+            currentProgressMessage = progressMessage[currentProgressIndex];
+
+          bottomBar.updateBottomBar(currentProgressMessage + ' Fetching ' + EXAMPLE_DOWNLOAD_URL);
+        })
+        .pipe(writeStream);
+
+
+      writeStream.on('finish', function () {
+        bottomBar.updateBottomBar('').close();
+        log.write().ok('Done in ' + self.EXAMPLES_ZIP_DESTINATION_PATH).write();
+        done();
+      });
+    } else {
       done();
-      return;
     }
-
-    dowloadCount = 18;
-    bottomBar = new inquirer.ui.BottomBar();
-    writeStream = fs.createWriteStream(this.EXAMPLES_ZIP_DESTINATION_PATH);
-
-    request
-      .get(EXAMPLE_DOWNLOAD_URL)
-      .on('error', function (err) {
-        self.log.conflict(err);
-      })
-      .on('data', function () {
-        var currentProgressIndex = (dowloadCount++ % 18),
-          currentProgressMessage = progressMessage[currentProgressIndex];
-
-        bottomBar.updateBottomBar(currentProgressMessage + ' Fetching ' + EXAMPLE_DOWNLOAD_URL);
-      })
-      .pipe(writeStream);
-
-
-    writeStream.on('finish', function () {
-      bottomBar.updateBottomBar('').close();
-      log.write().ok('Done in ' + self.EXAMPLES_ZIP_DESTINATION_PATH).write();
-      done();
-    });
   },
 
   unzip: function () {
@@ -141,47 +150,56 @@ module.exports = yeoman.generators.Base.extend({
       log = this.log.write(),
       dowloadCount, bottomBar;
 
-    if (fs.existsSync(this.EXAMPLES_EXTRACT_DESTINATION_PATH + '/' + this.EXAMPLES_PATH)) {
-      log.ok('Examples already extracted. Skip to next step.');
-      done();
-      return;
+    if (this.exampleName !== 'Continue without an example') {
+      if (fs.existsSync(this.EXAMPLES_EXTRACT_DESTINATION_PATH + '/' + this.EXAMPLES_PATH)) {
+        log.ok('Examples already extracted. Skip to next step.');
+        done();
+        return;
+      }
+
+      dowloadCount = 18;
+      bottomBar = new inquirer.ui.BottomBar();
+
+      unzipper.on('data', function () {
+        var currentProgressIndex = (dowloadCount++ % 18),
+          currentProgressMessage = progressMessage[currentProgressIndex];
+
+        bottomBar.updateBottomBar(currentProgressMessage + ' Unzipping ' + this.EXAMPLES_EXTRACT_DESTINATION_PATH);
+      });
+
+      unzipper.on('error', function (error) {
+        this.log.conflict('Error while unzipping "tmp/node-webkit-examples.zip"', error);
+        bottomBar.updateBottomBar('').close();
+      }.bind(this));
+
+      unzipper.on('extract', function () {
+        bottomBar.updateBottomBar('').close();
+        log.write().ok('Done unzipping examples.').write();
+        done();
+      }.bind(this));
+
+      unzipper.extract({
+        path: this.EXAMPLES_EXTRACT_DESTINATION_PATH
+      });
+    } else {
+      done()
     }
-
-    dowloadCount = 18;
-    bottomBar = new inquirer.ui.BottomBar();
-
-    unzipper.on('data', function () {
-      var currentProgressIndex = (dowloadCount++ % 18),
-        currentProgressMessage = progressMessage[currentProgressIndex];
-
-      bottomBar.updateBottomBar(currentProgressMessage + ' Unzipping ' + this.EXAMPLES_EXTRACT_DESTINATION_PATH);
-    });
-
-    unzipper.on('error', function (error) {
-      this.log.conflict('Error while unzipping "tmp/node-webkit-examples.zip"', error);
-      bottomBar.updateBottomBar('').close();
-    }.bind(this));
-
-    unzipper.on('extract', function () {
-      bottomBar.updateBottomBar('').close();
-      log.write().ok('Done unzipping examples.').write();
-      done();
-    }.bind(this));
-
-    unzipper.extract({
-      path: this.EXAMPLES_EXTRACT_DESTINATION_PATH
-    });
   },
 
   installExample: function () {
     var done = this.async(),
       exampleSourcePath = this.destinationPath(this.EXAMPLES_PATH + '/' + this.exampleName);
 
-    fsExtra.copy(exampleSourcePath, this.destinationPath('app'), function (error) {
+    if (this.exampleName !== 'Continue without an example') {
+      fsExtra.copy(exampleSourcePath, this.destinationPath('app'), function (error) {
       if (error) {
         this.log.conflict(error);
       }
+
       done();
-    }.bind(this));
+      }.bind(this));
+    } else {
+      done();
+    }
   }
 });
