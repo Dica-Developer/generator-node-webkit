@@ -21,6 +21,10 @@ module.exports = yeoman.generators.Base.extend({
 
   _optionOrPrompt: optionOrPrompt,
 
+  inializing: function () {
+    this.options.defaults = this.options.defaults || {};
+  },
+
   prompting: function () {
     var self = this,
       done = this.async();
