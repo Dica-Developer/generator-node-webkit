@@ -141,8 +141,9 @@ describe('node-webkit:download', function () {
         'appname': 'TestApp',
         'description': 'Test Description',
         'username': 'Test User',
-        'nwjs': false,
-        'examples': false
+        'exampleName': 'Continue without an example',
+        'platform': false,
+        'nwjsVersion': false
       },
       appGeneratorDeps = ['../../generators/app', [helpers.createDummyGenerator(), 'node-webkit:download']];
 
