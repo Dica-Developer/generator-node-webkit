@@ -64,12 +64,13 @@ module.exports = yeoman.generators.Base.extend({
         request.head(url, function (error, response) {
           if (error) {
             _this.log.conflict(error);
-          }
-          if (response.statusCode === 200) {
-            _this.log.ok('Use version "' + answer + '".');
-            validateDone(true);
           } else {
-            validateDone('No download url found for version "' + answer + '" (' + url + ')!');
+            if (response.statusCode === 200) {
+              _this.log.ok('Use version "' + answer + '".');
+              validateDone(true);
+            } else {
+              validateDone('No download url found for version "' + answer + '" (' + url + ')!');
+            }
           }
         });
       }
